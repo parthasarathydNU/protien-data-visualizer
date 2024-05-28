@@ -18,4 +18,4 @@ class ProteinBase(BaseModel):
     secondary_structure: Optional[List[str]] = None  # Expect a list
 
     class Config:
-        orm_mode = True
+        from_attributes = True

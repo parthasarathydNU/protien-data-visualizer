@@ -1,14 +1,19 @@
 from fastapi.testclient import TestClient
 from main import app
+import pytest
+import asyncio
 
-client = TestClient(app)
+@pytest.fixture(scope="module")
+def client():
+    with TestClient(app) as c:
+        yield c
 
-def test_read_protein_not_found():
+def test_read_protein_not_found(client):
     response = client.get("/proteins/nonexistent_entry")
     assert response.status_code == 404
     assert response.json() == {"detail": "Protein not found"}
 
-def test_create_protein():
+def test_create_protein(client):
     protein_data = {
         "entry": "test_entry",
         "organisms": "Test Organism",
@@ -28,7 +33,7 @@ def test_create_protein():
     assert response.status_code == 200
     assert response.json()["entry"] == "test_entry"
 
-def test_read_protein():
+def test_read_protein(client):
     response = client.get("/proteins/test_entry")
     assert response.status_code == 200
     assert response.json()["entry"] == "test_entry"
