@@ -147,6 +147,28 @@ async def delete_protein(entry: str):
     await database.execute(query)
     return {"message": "Protein deleted successfully"}
 
+async def format_data_as_markdown(data: list, query: str) -> str:
+    """
+    Format the query result data into markdown using OpenAI's API.
+    
+    :param data: The data to format.
+    :param query: The query that was used to generate the data.
+    :return: A markdown-formatted string.
+    """
+    prompt = f"Given the following data retrieved using the query '{query}', format it into a well-structured markdown format:\n\n{data}\n\nReturn the response in markdown format."
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "You are an assistant that formats data into markdown. You only return the final output, no fillers"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        content = response.choices[0].message['content']
+        return content
+    except Exception as e:
+        raise Exception(f"Error in formatting data as markdown: {e}") 
 
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):
@@ -158,8 +180,6 @@ async def query_model(query_request: QueryRequest):
             messages=messages
         )
         content = response.choices[0].message['content']
-
-        print(content)
 
         # Parse the JSON response from the model
         response_json = json.loads(content)              
@@ -173,8 +193,9 @@ async def query_model(query_request: QueryRequest):
             # Execute the SQL query using raw SQL
             with engine.connect() as conn:
                 result = conn.execute(text(response_content)).fetchall()
-                print(result)
-            return { "response": response_content}   
+                markdown_result = await format_data_as_markdown(result, response_content)
+                print(markdown_result)
+                return { "response": markdown_result}   
         else:
             return { "response": response_content}
 
@@ -182,5 +203,5 @@ async def query_model(query_request: QueryRequest):
     except Exception as e:
         print(e)
         # raise HTTPException(status_code=500, detail=str(e))
-        return {"response": e}
+        return {"response": "Error in forming output"}
     
