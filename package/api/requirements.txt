@@ -7,3 +7,4 @@ databases
 psycopg2-binary
 wheel
 pytest
+requests
