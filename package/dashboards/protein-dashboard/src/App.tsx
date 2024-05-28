@@ -4,6 +4,8 @@ import ProteinsList from './components/ProteinsList';
 import AddProtein from './components/AddProtein';
 import Layout from './components/Layout';
 import EditProtein from './components/EditProtein';
+import DataVisualization from './components/Viz';
+import ProteinDetail from './components/ProteinDetail';
 
 const App: React.FC = () => {
   return (
@@ -13,6 +15,8 @@ const App: React.FC = () => {
           <Route index element={<ProteinsList />} />
           <Route path="add-protein" element={<AddProtein />} />
           <Route path="edit-protein" element={<EditProtein />} />
+          <Route path="/visualization" element={<DataVisualization />} />
+          <Route path="/proteins/:entry" element={<ProteinDetail />} />
         </Route>
       </Routes>
     </Router>

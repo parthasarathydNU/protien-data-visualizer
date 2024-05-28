@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { fetchProteins, deleteProtein } from '../api';
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { fetchProteins, deleteProtein } from "../api";
 
 interface Protein {
   entry: string;
@@ -26,7 +26,7 @@ const ProteinsList: React.FC = () => {
 
   const handleDelete = async (entry: string) => {
     await deleteProtein(entry);
-    setProteins(proteins.filter(protein => protein.entry !== entry));
+    setProteins(proteins.filter((protein) => protein.entry !== entry));
   };
 
   return (
@@ -48,7 +48,12 @@ const ProteinsList: React.FC = () => {
         <tbody>
           {proteins.map((protein) => (
             <tr key={protein.entry}>
-              <td className="border px-4 py-2">{protein.entry}</td>
+              <Link
+                to={`/proteins/${protein.entry}`}
+                className="underline"
+              >
+                <td className="border px-4 py-2">{protein.entry}</td>
+              </Link>
               <td className="border px-4 py-2">{protein.length}</td>
               <td className="border px-4 py-2">{protein.first_seen}</td>
               <td className="border px-4 py-2">{protein.last_seen}</td>
@@ -56,8 +61,18 @@ const ProteinsList: React.FC = () => {
               <td className="border px-4 py-2">{protein.smart}</td>
               <td className="border px-4 py-2">{protein.avg_hydrophobicity}</td>
               <td className="border px-4 py-2">
-                <Link to={`/edit-protein?entry=${protein.entry}`} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2">Edit</Link>
-                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDelete(protein.entry)}>Delete</button>
+                <Link
+                  to={`/edit-protein?entry=${protein.entry}`}
+                  className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2"
+                >
+                  Edit
+                </Link>
+                <button
+                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                  onClick={() => handleDelete(protein.entry)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}

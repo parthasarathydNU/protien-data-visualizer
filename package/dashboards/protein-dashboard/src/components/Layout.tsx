@@ -6,9 +6,9 @@ const Layout: React.FC = () => {
     <div className="min-h-screen flex flex-col">
       <header className="bg-blue-600 text-white py-4">
         <nav className="container mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold">Protein Dashboard</h1>
+        <Link to="/" className="hover:underline"><h1 className="text-xl font-bold">Protein Dashboard</h1></Link>
           <div className="space-x-4">
-            <Link to="/" className="hover:underline">Home</Link>
+            <Link to="/visualization" className="hover:underline">Visualize</Link>
             <Link to="/add-protein" className="hover:underline">Add Protein</Link>
           </div>
         </nav>
