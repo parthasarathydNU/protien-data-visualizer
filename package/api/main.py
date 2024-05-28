@@ -72,11 +72,23 @@ async def list_proteins(skip: int = 0, limit: int = 10):
         response.append(result_dict)
     return response
 
-@app.put("/proteins/{entry}", response_model=ProteinBase)
+@app.put("/proteins/{entry}")
 async def update_protein(entry: str, protein: ProteinBase):
-    query = protein_data.update().where(protein_data.c.entry == entry).values(**protein.dict())
-    await database.execute(query)
-    return {**protein.dict(), "entry": entry}
+    query = protein_data.update().where(protein_data.c.entry == entry).values(
+        length=protein.length,
+        first_seen=protein.first_seen,
+        last_seen=protein.last_seen,
+        sequence=protein.sequence,
+        pfam=protein.pfam,
+        smart=protein.smart,
+        amino_acid_composition=protein.amino_acid_composition,
+        avg_hydrophobicity=protein.avg_hydrophobicity,
+        secondary_structure=protein.secondary_structure
+    )
+    result = await database.execute(query)
+    if result is None:
+        raise HTTPException(status_code=404, detail="Protein not found")
+    return {"message": "Protein updated successfully"}
 
 @app.delete("/proteins/{entry}", response_model=dict)
 async def delete_protein(entry: str):

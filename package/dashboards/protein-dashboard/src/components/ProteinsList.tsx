@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { fetchProteins, deleteProtein } from '../api';
 
 interface Protein {
@@ -29,7 +30,7 @@ const ProteinsList: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div>
       <h1 className="text-2xl font-bold mb-4">Proteins List</h1>
       <table className="min-w-full bg-white">
         <thead>
@@ -55,6 +56,7 @@ const ProteinsList: React.FC = () => {
               <td className="border px-4 py-2">{protein.smart}</td>
               <td className="border px-4 py-2">{protein.avg_hydrophobicity}</td>
               <td className="border px-4 py-2">
+                <Link to={`/edit-protein?entry=${protein.entry}`} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2">Edit</Link>
                 <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDelete(protein.entry)}>Delete</button>
               </td>
             </tr>
