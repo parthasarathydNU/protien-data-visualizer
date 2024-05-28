@@ -38,7 +38,6 @@ const ProteinsList: React.FC = () => {
             <th className="py-2">Length</th>
             <th className="py-2">First Seen</th>
             <th className="py-2">Last Seen</th>
-            <th className="py-2">Sequence</th>
             <th className="py-2">Pfam</th>
             <th className="py-2">SMART</th>
             <th className="py-2">Avg. Hydrophobicity</th>
@@ -52,7 +51,6 @@ const ProteinsList: React.FC = () => {
               <td className="border px-4 py-2">{protein.length}</td>
               <td className="border px-4 py-2">{protein.first_seen}</td>
               <td className="border px-4 py-2">{protein.last_seen}</td>
-              <td className="border px-4 py-2">{protein.sequence}</td>
               <td className="border px-4 py-2">{protein.pfam}</td>
               <td className="border px-4 py-2">{protein.smart}</td>
               <td className="border px-4 py-2">{protein.avg_hydrophobicity}</td>
