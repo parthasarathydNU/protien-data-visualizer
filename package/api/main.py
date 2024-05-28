@@ -5,13 +5,13 @@ from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 import requests
-from database import database
+from database import database, engine
 from models import protein_data
 from queryModel import DB_SCHEMA, QueryRequest, QueryResponse, CHAT_GPT_SYSTEM_PROMPT
 from protein import ProteinBase
 import json
 from contextlib import asynccontextmanager
-from sqlalchemy import select
+from sqlalchemy import select, text
 import logging
 import openai
 
@@ -158,7 +158,29 @@ async def query_model(query_request: QueryRequest):
             messages=messages
         )
         content = response.choices[0].message['content']
+
+        print(content)
+
+        # Parse the JSON response from the model
+        response_json = json.loads(content)              
+
+        response_type = response_json.get("type")
+        response_content = response_json.get("content")
+
+        # print(response_json, response_content)
+
+        if response_type == "query":
+            # Execute the SQL query using raw SQL
+            with engine.connect() as conn:
+                result = conn.execute(text(response_content)).fetchall()
+                print(result)
+            return { "response": response_content}   
+        else:
+            return { "response": response_content}
+
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        print(e)
+        # raise HTTPException(status_code=500, detail=str(e))
+        return {"response": e}
     
-    return {"response": content}
