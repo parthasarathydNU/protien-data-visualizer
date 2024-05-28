@@ -66,7 +66,7 @@ const AddProtein: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 h-[80vh] overflow-auto">
       <h1 className="text-2xl font-bold mb-4">Add Protein</h1>
       <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
         <input className="border p-2" type="text" name="entry" placeholder="Entry" value={protein.entry} onChange={handleChange} />

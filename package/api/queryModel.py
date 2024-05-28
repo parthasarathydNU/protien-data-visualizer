@@ -2,9 +2,13 @@ from pydantic import BaseModel
 
 class QueryRequest(BaseModel):
     query: str
+    context: list = None  # To maintain the conversation context
+    use_openai: bool = False  # Flag to decide which model to use
+
 
 class QueryResponse(BaseModel):
-    sql_query: str
+    response: str
+    context: list
 
 DB_SCHEMA = """
 The database has the following tables and columns:
@@ -23,3 +27,7 @@ Table: protein_data
 - avg_hydrophobicity (float): Average hydrophobicity of the protein.
 - secondary_structure (jsonb): Secondary structure of the protein.
 """
+
+SYSTEM_PROMPT = "You are an intelligent assistant capable of having conversations about a protein database and generating SQL queries based on user requests. The database schema is as follows:" + DB_SCHEMA +  "If the user asks for specific data or details that require an SQL query, generate the appropriate SQL query to answer the question.  If the user asks general questions or wants information about the data, provide a conversational response. In your response, clearly indicate whether the output is a conversation response or an SQL query."
+
+CHAT_GPT_SYSTEM_PROMPT = {"role": "system", "content": SYSTEM_PROMPT}

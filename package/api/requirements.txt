@@ -8,3 +8,5 @@ psycopg2-binary
 wheel
 pytest
 requests
+openai==0.28
+python-dotenv

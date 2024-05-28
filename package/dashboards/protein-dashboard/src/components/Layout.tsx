@@ -3,7 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 
 const Layout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col max-h-screen">
       <header className="bg-blue-600 text-white py-4">
         <nav className="container mx-auto flex justify-between items-center">
         <Link to="/" className="hover:underline"><h1 className="text-xl font-bold">Protein Dashboard</h1></Link>
