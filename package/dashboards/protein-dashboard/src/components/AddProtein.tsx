@@ -22,7 +22,35 @@ const AddProtein: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createProtein(protein);
+    
+    let payload = {
+      entry: '',
+      length: 0,
+      first_seen: '',
+      last_seen: '',
+      sequence: '',
+      pfam: '',
+      smart: '',
+      organism_id: '',
+      amino_acid_composition: '',
+      avg_hydrophobicity: {},
+      secondary_structure: ['']
+    };
+
+    payload.entry = protein.entry;
+    payload.length = parseInt(protein.length)
+    payload.first_seen = protein.first_seen;
+    payload.last_seen = protein.last_seen;
+    payload.sequence = protein.sequence;
+    payload.pfam = protein.pfam;
+    payload.smart = protein.smart;
+    payload.amino_acid_composition = JSON.parse(protein.amino_acid_composition);
+    payload.avg_hydrophobicity = parseInt(protein.avg_hydrophobicity);
+    payload.secondary_structure = protein.secondary_structure.split(",");
+    
+
+    
+    await createProtein(payload);
     setProtein({
       entry: '',
       length: '',

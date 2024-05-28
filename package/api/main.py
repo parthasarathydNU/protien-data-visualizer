@@ -1,12 +1,17 @@
 from typing import List
 from fastapi import FastAPI, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
+
 from database import database
 from models import protein_data
 from protein import ProteinBase
 import json
 from contextlib import asynccontextmanager
 from sqlalchemy import select
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -48,9 +53,26 @@ async def read_protein(entry: str):
 
 @app.post("/proteins/", response_model=ProteinBase)
 async def create_protein(protein: ProteinBase):
-    query = protein_data.insert().values(**protein.dict())
-    last_record_id = await database.execute(query)
-    return {**protein.dict(), "id": last_record_id}
+    try:
+        query = protein_data.insert().values(
+            entry=protein.entry,
+            length=protein.length,
+            first_seen=str(protein.first_seen),
+            last_seen=str(protein.last_seen),
+            organism_id=protein.organism_id,
+            protein_names=protein.protein_names,
+            sequence=protein.sequence,
+            pfam=protein.pfam,
+            smart=protein.smart,
+            amino_acid_composition=jsonable_encoder(protein.amino_acid_composition),
+            avg_hydrophobicity=protein.avg_hydrophobicity,
+            secondary_structure=jsonable_encoder(protein.secondary_structure)
+        )
+        last_record_id = await database.execute(query)
+        return {**protein.dict(), "id": last_record_id}
+    except Exception as e:
+        logging.error(f"Error creating protein: {e}")
+        raise HTTPException(status_code=400, detail="Error creating protein")
 
 @app.get("/proteins/", response_model=List[ProteinBase])
 async def list_proteins(skip: int = 0, limit: int = 10):
@@ -74,21 +96,36 @@ async def list_proteins(skip: int = 0, limit: int = 10):
 
 @app.put("/proteins/{entry}")
 async def update_protein(entry: str, protein: ProteinBase):
-    query = protein_data.update().where(protein_data.c.entry == entry).values(
-        length=protein.length,
-        first_seen=protein.first_seen,
-        last_seen=protein.last_seen,
-        sequence=protein.sequence,
-        pfam=protein.pfam,
-        smart=protein.smart,
-        amino_acid_composition=protein.amino_acid_composition,
-        avg_hydrophobicity=protein.avg_hydrophobicity,
-        secondary_structure=protein.secondary_structure
+    # Step 1: Perform the update
+    query = (
+        protein_data.update()
+        .where(protein_data.c.entry == entry)
+        .values(
+            length=protein.length,
+            first_seen=str(protein.first_seen),
+            last_seen=str(protein.last_seen),
+            sequence=protein.sequence,
+            pfam=protein.pfam,
+            smart=protein.smart,
+            amino_acid_composition=protein.amino_acid_composition,
+            avg_hydrophobicity=protein.avg_hydrophobicity,
+            secondary_structure=protein.secondary_structure
+        )
     )
     result = await database.execute(query)
-    if result is None:
+    
+    # Check if any rows were affected
+    if result == 0:
         raise HTTPException(status_code=404, detail="Protein not found")
-    return {"message": "Protein updated successfully"}
+    
+    # Step 2: Retrieve the updated record
+    select_query = protein_data.select().where(protein_data.c.entry == entry)
+    updated_protein = await database.fetch_one(select_query)
+    
+    if not updated_protein:
+        raise HTTPException(status_code=404, detail="Protein not found")
+    
+    return updated_protein
 
 @app.delete("/proteins/{entry}", response_model=dict)
 async def delete_protein(entry: str):
