@@ -1,5 +1,6 @@
 from typing import List
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from database import database
 from models import protein_data
 from protein import ProteinBase
@@ -14,6 +15,21 @@ async def lifespan(app: FastAPI):
     await database.disconnect()
 
 app = FastAPI(lifespan=lifespan)
+
+# Define the origins that are allowed to make CORS requests
+origins = [
+    "http://localhost:3000",  # React development server
+    "http://localhost:8000",  # FastAPI server
+    # Add more origins as needed
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allow specific origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
+)
 
 @app.get("/proteins/{entry}", response_model=ProteinBase)
 async def read_protein(entry: str):
