@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {fetchProtein} from "../api"
-import Protein3DViewer, { secondaryStructures } from './Protein3DViewer';
-import ProteinCard from './ProteinCard';
-import ProteinVisualization from './ProteinDataVisualion';
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { fetchProtein } from "../api";
+import Protein3DViewer, { secondaryStructures } from "./Protein3DViewer";
+import ProteinCard from "./ProteinCard";
+import ProteinVisualization from "./ProteinDataVisualion";
+import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
+import "react-tabs/style/react-tabs.css";
 
 export interface Protein {
   entry: string;
@@ -23,15 +25,16 @@ export interface Protein {
 const ProteinDetail: React.FC = () => {
   const { entry } = useParams<{ entry: string }>();
   const [protein, setProtein] = useState<Protein | null>(null);
+  const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
     const getData = async () => {
       try {
-        if(!entry) return ;
+        if (!entry) return;
         const response = await fetchProtein(entry);
         setProtein(response);
       } catch (error) {
-        console.error('Error fetching protein data', error);
+        console.error("Error fetching protein data", error);
       }
     };
 
@@ -44,15 +47,29 @@ const ProteinDetail: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <header className="bg-gray-800 p-4 text-white text-center text-2xl">
-        Protein Details
-      </header>
       {protein ? (
-        <div>
+        <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
+          <TabList>
+            <Tab>Metadata</Tab>
+            <Tab>3D Viz</Tab>
+            <Tab>Charts</Tab>
+          </TabList>
+
+          <TabPanel>
             <ProteinCard protein={protein} />
-            <Protein3DViewer sequence={protein.sequence} secondaryStructure={protein.secondary_structure as secondaryStructures[]}/>
+          </TabPanel>
+          <TabPanel>
+            <Protein3DViewer
+              sequence={protein.sequence}
+              secondaryStructure={
+                protein.secondary_structure as secondaryStructures[]
+              }
+            />
+          </TabPanel>
+          <TabPanel>
             <ProteinVisualization proteinId={protein.entry} />
-        </div>
+          </TabPanel>
+        </Tabs>
       ) : (
         <p>Loading...</p>
       )}

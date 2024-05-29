@@ -37,25 +37,31 @@ const ProteinVisualization: React.FC<{ proteinId: string }> = ({
   }
 
   return (
-    <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
-      <TabList>
-        <Tab>Amino Acid Composition</Tab>
-        <Tab>Secondary Structure</Tab>
-        <Tab>Hydrophobicity</Tab>
-      </TabList>
+    <div>
+      <Tabs selectedIndex={tabIndex} onSelect={(index) => setTabIndex(index)}>
+        <TabList>
+          <Tab>Amino Acid Composition</Tab>
+          <Tab>Secondary Structure Composition</Tab>
+          <Tab>Hydrophobicity</Tab>
+        </TabList>
 
-      <TabPanel>
-        <AminoAcidCompositionChart
-          composition={proteinData.amino_acid_composition}
-        />
-      </TabPanel>
-      <TabPanel>
-        <SecondaryStructureChart structure={proteinData.secondary_structure} />
-      </TabPanel>
-      <TabPanel>
-        <HydrophobicityGauge hydrophobicity={proteinData.avg_hydrophobicity} />
-      </TabPanel>
-    </Tabs>
+        <TabPanel>
+          <AminoAcidCompositionChart
+            composition={proteinData.amino_acid_composition}
+          />
+        </TabPanel>
+        <TabPanel>
+          <SecondaryStructureChart
+            structure={proteinData.secondary_structure}
+          />
+        </TabPanel>
+        <TabPanel>
+          <HydrophobicityGauge
+            hydrophobicity={proteinData.avg_hydrophobicity}
+          />
+        </TabPanel>
+      </Tabs>
+    </div>
   );
 };
 

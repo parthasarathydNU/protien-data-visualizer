@@ -27,7 +27,7 @@ const SecondaryStructureChart: React.FC<SecondaryStructureProps> = ({
   };
 
   return (
-    <div>
+    <div >
       <Pie data={data} />
     </div>
   );
