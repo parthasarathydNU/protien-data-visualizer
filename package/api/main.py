@@ -183,7 +183,7 @@ async def format_data_as_markdown(data: list, query: str) -> str:
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):
     print(query_request.context)
-    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context[-5:] + [{"role": "user", "content": query_request.query}]
+    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
     
     try:
         response = openai.ChatCompletion.create(

@@ -35,7 +35,8 @@ SQL_RULES = [
     "No Sensitive Data Access: Do not generate queries that access potentially sensitive or personally identifiable information (PII) unless explicitly allowed and necessary.",
     "Parameterize Inputs: Ensure that any user inputs are parameterized to prevent SQL injection attacks.",
     "Include error handling in the generated queries to manage any issues during execution.",
-    "Limit results to 10 entries"
+    "Limit results to 10 entries",
+    "Do not return data from the organisms, protein_names and organism_id columns in the response"
 
 ]
 

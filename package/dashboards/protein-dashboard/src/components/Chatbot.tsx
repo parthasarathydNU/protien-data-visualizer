@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import './Chatbot.css'; // Ensure you have the appropriate styles
 
 interface Message {
@@ -10,9 +12,19 @@ interface Message {
 const Chatbot: React.FC = () => {
   const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const messageEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setQuery('');
     const newMessages = [...messages, { user: query }];
     setMessages(newMessages);
 
@@ -22,7 +34,7 @@ const Chatbot: React.FC = () => {
     });
 
     setMessages([...newMessages, { bot: response.data.response }]);
-    setQuery('');
+    
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -37,7 +49,11 @@ const Chatbot: React.FC = () => {
       <div className="messages">
         {messages.map((msg, index) => (
           <div key={index} className={msg.user ? 'message user' : 'message bot'}>
-            {msg.user || msg.bot}
+            {msg.user ? (
+              msg.user
+            ) : (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.bot}</ReactMarkdown>
+            )}
           </div>
         ))}
       </div>
