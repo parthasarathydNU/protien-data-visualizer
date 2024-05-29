@@ -2,6 +2,9 @@
 
 This project is a comprehensive web application designed to interact with a protein database. It includes functionalities for creating, reading, updating, and deleting protein data, as well as advanced features like an AI chatbot for SQL query generation and visualizations using Three.js.
 
+## Architecture
+
+![Sample Architecture](./images/SampleArchitecture.png)
 
 ## Features
 
