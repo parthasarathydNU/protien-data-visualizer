@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
+
 import Markdown from 'react-markdown'
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
-import "./Chatbot.css"; // Ensure you have the appropriate styles
+import "./Chatbot.css";
+import { getAIResponse } from "../api";
 
 interface Message {
   user?: string;
@@ -34,15 +35,17 @@ const Chatbot: React.FC = () => {
     setQuery("");
     const newMessages = [...messages, { user: query }];
     setMessages(newMessages);
-
-    const response = await axios.post("http://localhost:8000/query/", {
-      query,
-      context: newMessages.map((msg) =>
-        msg.user
-          ? { role: "user", content: msg.user }
-          : { role: "assistant", content: msg.bot }
-      ),
-    });
+    
+    const payload = {
+        query,
+        context: newMessages.map((msg) =>
+          msg.user
+            ? { role: "user", content: msg.user }
+            : { role: "assistant", content: msg.bot }
+        ),
+      }
+    
+    const response = await getAIResponse(payload);
 
     setMessages([...newMessages, { bot: response.data.response }]);
     setLoading(false);

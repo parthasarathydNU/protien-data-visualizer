@@ -1,6 +1,11 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+const API_URL = process.env.REACT_APP_API_URL;
+
+export const getAIResponse = async ( payload : any ) => {
+  const response = await axios.post(`${API_URL}/query/`, payload);
+  return response.data;
+}
 
 export const fetchProteins = async () => {
   const response = await axios.get(`${API_URL}/proteins/`);
