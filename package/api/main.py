@@ -156,23 +156,34 @@ async def format_data_as_markdown(data: list, query: str) -> str:
     :return: A markdown-formatted string.
     """
     prompt = f"Given the following data retrieved using the query '{query}', format it into a well-structured markdown format:\n\n{data}\n\nReturn the response in markdown format."
+    def split_data(data, chunk_size=100):
+        """ Split data into smaller chunks to avoid exceeding token limit. """
+        for i in range(0, len(data), chunk_size):
+            yield data[i:i + chunk_size]
     
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "You are an assistant that formats data into markdown. You only return the final output, no fillers"},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        content = response.choices[0].message['content']
-        return content
-    except Exception as e:
-        raise Exception(f"Error in formatting data as markdown: {e}") 
+    markdown_parts = []
+    for chunk in split_data(data):
+        prompt = f"Given the following data retrieved using the query '{query}', format it into a well-structured markdown format:\n\n{chunk}\n\nReturn the response in markdown format."
+        
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": "You are an assistant that formats data into markdown. You only return the final output, no fillers"},
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            content = response.choices[0].message['content']
+            markdown_parts.append(content)
+        except Exception as e:
+            raise Exception(f"Error in formatting data as markdown: {e}")
+    
+    return "\n".join(markdown_parts)
 
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):
-    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
+    print(query_request.context)
+    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context[-5:] + [{"role": "user", "content": query_request.query}]
     
     try:
         response = openai.ChatCompletion.create(
