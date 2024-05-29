@@ -47,9 +47,10 @@ const ProteinDetail: React.FC = () => {
         Protein Details
       </header>
       {protein ? (
-        <div>
-          <ProteinCard protein={protein} />
+        <div className='flex align-middle'>
+         
           <Protein3DViewer sequence={protein.sequence} secondaryStructure={protein.secondary_structure as secondaryStructures[]}/>
+          <ProteinCard protein={protein} />
         </div>
       ) : (
         <p>Loading...</p>

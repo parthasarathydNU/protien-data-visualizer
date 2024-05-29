@@ -10,9 +10,9 @@ const ProteinCard = ({ protein } : {protein: Protein}) => (
     <p><strong>Sequence:</strong> {protein.sequence}</p>
     <p><strong>PFAM:</strong> {protein.pfam}</p>
     <p><strong>SMART:</strong> {protein.smart}</p>
-    <p><strong>Amino Acid Composition:</strong> {JSON.stringify(protein.amino_acid_composition)}</p>
     <p><strong>Average Hydrophobicity:</strong> {protein.avg_hydrophobicity}</p>
     <p><strong>Secondary Structure:</strong> {JSON.stringify(protein.secondary_structure)}</p>
+    <p><strong>Amino Acid Composition:</strong> {JSON.stringify(protein.amino_acid_composition)}</p>
   </div>
 );
 
