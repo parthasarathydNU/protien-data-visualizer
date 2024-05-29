@@ -37,9 +37,7 @@ app = FastAPI(lifespan=lifespan)
 
 # Define the origins that are allowed to make CORS requests
 origins = [
-    "http://localhost:3000",  # React development server
-    "http://localhost:8000",  # FastAPI server
-    # Add more origins as needed
+    "*"
 ]
 
 app.add_middleware(
