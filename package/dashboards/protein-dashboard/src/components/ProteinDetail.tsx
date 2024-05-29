@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {fetchProtein} from "../api"
+import Protein3DViewer, { secondaryStructures } from './Protein3DViewer';
+import ProteinCard from './ProteinCard';
 
-interface Protein {
+export interface Protein {
   entry: string;
   length: number;
   first_seen: string;
@@ -40,25 +42,18 @@ const ProteinDetail: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">{protein.entry}</h2>
-      <p><strong>Entry:</strong> {protein.entry}</p>
-      <p><strong>Names:</strong> {protein.protein_names}</p>
-      <p><strong>Length:</strong> {protein.length}</p>
-      <p><strong>First Seen:</strong> {protein.first_seen}</p>
-      <p><strong>Last Seen:</strong> {protein.last_seen}</p>
-      <p><strong>Organism ID:</strong> {protein.organism_id}</p>
-      <p><strong>Sequence:</strong> {protein.sequence}</p>
-      <p><strong>Pfam:</strong> {protein.pfam}</p>
-      <p><strong>Smart:</strong> {protein.smart}</p>
-      <p><strong>Amino Acid Composition:</strong></p>
-      <ul>
-        {Object.entries(protein.amino_acid_composition).map(([amino, value]) => (
-          <li key={amino}>{amino}: {value}</li>
-        ))}
-      </ul>
-      <p><strong>Average Hydrophobicity:</strong> {protein.avg_hydrophobicity}</p>
-      <p><strong>Secondary Structure:</strong> {protein.secondary_structure.join(', ')}</p>
+    <div className="container mx-auto p-4">
+      <header className="bg-gray-800 p-4 text-white text-center text-2xl">
+        Protein Details
+      </header>
+      {protein ? (
+        <div>
+          <ProteinCard protein={protein} />
+          <Protein3DViewer sequence={protein.sequence} secondaryStructure={protein.secondary_structure as secondaryStructures[]}/>
+        </div>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };
