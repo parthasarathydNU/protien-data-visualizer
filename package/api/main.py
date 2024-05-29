@@ -1,13 +1,13 @@
 import os
 from dotenv import load_dotenv
 from typing import List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 import requests
 from database import database, engine
 from models import protein_data
-from util_functions import remove_control_characters
+from util_functions import remove_control_characters, process_protein_data
 from queryModel import DB_SCHEMA, QueryRequest, QueryResponse, CHAT_GPT_SYSTEM_PROMPT
 from protein import ProteinBase
 import json
@@ -65,6 +65,16 @@ async def read_protein(entry: str):
         result['secondary_structure'] = json.loads(result['secondary_structure'])
 
     return result
+
+@app.get("/get_protein_data/{entry}")
+async def get_protein_data(entry: str):
+
+    query = protein_data.select().where(protein_data.c.entry == entry)
+    protein = await database.fetch_one(query)
+    if not protein:
+        raise HTTPException(status_code=404, detail="Protein not found")
+    processed_data = process_protein_data(protein)
+    return processed_data    
 
 @app.post("/proteins/", response_model=ProteinBase)
 async def create_protein(protein: ProteinBase):
@@ -251,8 +261,8 @@ async def query_model(query_request: QueryRequest):
                 return { "response": markdown_result}   
         else:
             print("get markdown result of response ")
-            markdown_result = await format_data_as_markdown2(response_content)
-            return { "response": markdown_result}   
+            # markdown_result = await format_data_as_markdown2(response_content)
+            return { "response": response_content}   
 
 
     except Exception as e:

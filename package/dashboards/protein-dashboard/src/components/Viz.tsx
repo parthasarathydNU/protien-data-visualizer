@@ -55,8 +55,8 @@ const DataVisualization: React.FC = () => {
   }, []);
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Protein Lengths</h2>
+    <div className=' h-[70vh] overflow-auto'>
+      <h2 className="text-2xl font-bold mb-4">Protein Lengths across Unique Identifiers</h2>
       {chartData && (
         <Bar
           data={chartData}
