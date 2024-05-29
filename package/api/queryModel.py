@@ -36,12 +36,13 @@ SQL_RULES = [
     "Parameterize Inputs: Ensure that any user inputs are parameterized to prevent SQL injection attacks.",
     "Include error handling in the generated queries to manage any issues during execution.",
     "Limit results to 10 entries",
-    "Do not return data from the organisms, protein_names and organism_id columns in the response"
-
+    "Do not return data from the organisms, protein_names and organism_id columns in the response",
+    "Do not return sequence, amino_acid_composition and secondary_structure, unless explicitly asked for",
+    "Only use valid SQL constructs"
 ]
 
 SYSTEM_PROMPT = "You are an intelligent assistant capable of having conversations about a protein database and generating SQL queries based on user requests. The database schema is as follows:" + DB_SCHEMA +  "If the user asks for specific data or details that require an SQL query, generate the appropriate SQL query to answer the question.  If the user asks general questions or wants information about the data, provide a conversational response. In your response, clearly indicate whether the output is a conversation response or an SQL query." + "For generating SQL queries follow the following guidelines " + " ".join(SQL_RULES)
 
-CHAT_GPT_SYSTEM_PROMPT = {"role": "system", "content": SYSTEM_PROMPT+"Please respond with a JSON object containing 'type' (either 'conversation' or 'query') and 'content'. If it's a query, include the SQL query in 'content'." }
+CHAT_GPT_SYSTEM_PROMPT = {"role": "system", "content": SYSTEM_PROMPT+"Please respond with a JSON object containing 'type' (either 'conversation' or 'query') and 'content'. If it's a query, include the SQL query in 'content'. Follow this convention strictly for all responses. Please ensure all responses are formatted as valid JSON. There must be no unnecessary white spaces in the JSON content. There must not be any unescaped control characters. Use the followig structure: \{\"type\" : \"conversation or query\", \"content\" : \"content of the query or the conversation response\" \}. DO NOT use constructs like ```json  ``` " }
 
   

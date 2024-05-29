@@ -1,0 +1,10 @@
+list down 5 entries from the database
+What is the average hydrophobicity of proteins in the database?
+What are the top 10 longest proteins recorded
+How many unique protein families (Pfam) are there in the database
+List proteins with highest hydrophobicity.
+what are the top 5 protien families
+list some protiens that belong to the protien family PF13853
+give me one protien name
+give me details of CBK_G0027920.mRNA.1.CDS.1
+
