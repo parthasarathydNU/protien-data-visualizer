@@ -30,6 +30,7 @@
   .message.bot {
     background-color: #ffe6e6;
     align-self: flex-end;
+    overflow-y: auto;
   }
   
   .input-form {
