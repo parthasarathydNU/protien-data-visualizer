@@ -4,7 +4,7 @@ import ProteinsList from './components/ProteinsList';
 import AddProtein from './components/AddProtein';
 import Layout from './components/Layout';
 import EditProtein from './components/EditProtein';
-import DataVisualization from './components/Viz';
+import DataVisualization from './components/charts/Viz';
 import ProteinDetail from './components/ProteinDetail';
 import Chatbot from './components/Chatbot';
 

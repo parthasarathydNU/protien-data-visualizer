@@ -23,7 +23,7 @@ const Protein3DViewer = (props: ProteinData) => {
         1000
       );
       const renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth/2, window.innerHeight/2);
+      renderer.setSize(window.innerWidth, window.innerHeight / 2);
       mountRef.current.appendChild(renderer.domElement);
 
       const controls = new OrbitControls(camera, renderer.domElement);
@@ -88,13 +88,13 @@ const Protein3DViewer = (props: ProteinData) => {
       const proteinStructure = createProteinStructure();
       scene.add(proteinStructure);
 
-    //   camera.position.z = 5;
+      //   camera.position.z = 5;
 
       // Set camera for top-down view
       camera.position.set(0, 20, 0);
       camera.lookAt(0, 0, 0);
 
-    //   camera.zoom = 10;
+      //   camera.zoom = 10;
 
       const animate = () => {
         requestAnimationFrame(animate);
@@ -113,20 +113,25 @@ const Protein3DViewer = (props: ProteinData) => {
   }, [sequence, secondaryStructure]);
 
   return (
-    <div className="flex flex-col justify-center" >
-        <div className="flex gap-2">
-          <h2><strong>Legend</strong></h2>
-          <p>
-            <span style={{ color: "#ff0000" }}>■</span> Helix
-          </p>
-          <p>
-            <span style={{ color: "#0000ff" }}>■</span> Sheet
-          </p>
-          <p>
-            <span style={{ color: "#00ff00" }}>■</span> Coil
-          </p>
-        </div>
-        <div className="overflow-y-auto" ref={mountRef}></div>
+    <div className="flex flex-col justify-center">
+      <header className="bg-gray-800 p-4 text-white text-center text-2xl">
+        Protein Structure
+      </header>
+      <div className="overflow-y-auto" ref={mountRef}></div>
+      {/* <div className="flex gap-2">
+        <h2>
+          <strong>Legend</strong>
+        </h2>
+        <p>
+          <span style={{ color: "#ff0000" }}>■</span> Helix
+        </p>
+        <p>
+          <span style={{ color: "#0000ff" }}>■</span> Sheet
+        </p>
+        <p>
+          <span style={{ color: "#00ff00" }}>■</span> Coil
+        </p>
+      </div> */}
     </div>
   );
 };

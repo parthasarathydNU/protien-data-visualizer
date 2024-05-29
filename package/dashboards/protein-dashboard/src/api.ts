@@ -7,6 +7,11 @@ export const fetchProteins = async () => {
   return response.data;
 };
 
+export const fetchProteinCalculations = async (entry: string) => {
+  const response = await axios.get(`${API_URL}/get_protein_data/${entry}`);
+  return response.data;
+};
+
 export const fetchProtein = async (entry: string) => {
   const response = await axios.get(`${API_URL}/proteins/${entry}`);
   return response.data;

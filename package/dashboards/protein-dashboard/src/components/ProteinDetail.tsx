@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import {fetchProtein} from "../api"
 import Protein3DViewer, { secondaryStructures } from './Protein3DViewer';
 import ProteinCard from './ProteinCard';
+import ProteinVisualization from './ProteinDataVisualion';
 
 export interface Protein {
   entry: string;
@@ -47,10 +48,10 @@ const ProteinDetail: React.FC = () => {
         Protein Details
       </header>
       {protein ? (
-        <div className='flex align-middle'>
-         
-          <Protein3DViewer sequence={protein.sequence} secondaryStructure={protein.secondary_structure as secondaryStructures[]}/>
-          <ProteinCard protein={protein} />
+        <div>
+            <ProteinCard protein={protein} />
+            <Protein3DViewer sequence={protein.sequence} secondaryStructure={protein.secondary_structure as secondaryStructures[]}/>
+            <ProteinVisualization proteinId={protein.entry} />
         </div>
       ) : (
         <p>Loading...</p>
