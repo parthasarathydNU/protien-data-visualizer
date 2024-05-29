@@ -1,9 +1,14 @@
+import os
+from dotenv import load_dotenv
 from databases import Database
 from sqlalchemy import create_engine, MetaData
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql://postgres:postgres@localhost:5432/generatebiomedicines"
+# Load environment variables from .env file
+load_dotenv()
+
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
