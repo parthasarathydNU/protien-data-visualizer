@@ -27,7 +27,7 @@ const SecondaryStructureChart: React.FC<SecondaryStructureProps> = ({
   };
 
   return (
-    <div >
+    <div className=" max-h-[50vh] flex justify-center" >
       <Pie data={data} />
     </div>
   );

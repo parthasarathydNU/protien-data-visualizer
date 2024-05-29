@@ -1,14 +1,14 @@
 import os
 from dotenv import load_dotenv
 from typing import List
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException
 from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
-import requests
+from fastapi.responses import JSONResponse
 from database import database, engine
 from models import protein_data
 from util_functions import remove_control_characters, process_protein_data
-from queryModel import DB_SCHEMA, QueryRequest, QueryResponse, CHAT_GPT_SYSTEM_PROMPT
+from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_PROMPT
 from protein import ProteinBase
 import json
 from contextlib import asynccontextmanager
@@ -16,7 +16,6 @@ from sqlalchemy import select, text
 import logging
 import openai
 
-from queryModel import SYSTEM_PROMPT, DB_SCHEMA
 
 logging.basicConfig(level=logging.INFO)
 
@@ -35,19 +34,32 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-# Define the origins that are allowed to make CORS requests
-origins = [
-    "*"
-]
 
+# Define allowed origins
+origins = ["*"]
+
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # Allow specific origins
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all methods
-    allow_headers=["*"],  # Allow all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
+# Handle OPTIONS requests
+@app.options("/{rest_of_path:path}")
+async def options_handler(rest_of_path: str):
+    return JSONResponse(status_code=200, headers={
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization"
+    })
+
+# Simple endpoint for testing
+@app.get("/")
+async def read_root():
+    return {"message": "Hello World"}
 
 @app.get("/proteins/{entry}", response_model=ProteinBase)
 async def read_protein(entry: str):
@@ -222,6 +234,41 @@ async def format_data_as_markdown(data: list, query: str) -> str:
             raise Exception(f"Error in formatting data as markdown: {e}")
     
     return "\n".join(markdown_parts)
+
+
+@app.post("/query_followup/")
+async def query_followup(query_request: QueryRequest):
+    messages = [CHAT_GPT_FOLLOWUP_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages
+        )
+        content = response.choices[0].message['content']
+
+        print("Initial response ", content)
+
+        content = remove_control_characters(content)
+
+        print("Removed control chars  ", content)
+
+        # Parse the JSON response from the model
+        response_json = json.loads(content)              
+
+        follow_up_questions = response_json.get("follow_up_questions", [])
+
+        print("Follow up questions: ", follow_up_questions)
+
+        if not follow_up_questions:
+            return {"follow_up_questions": [""]}
+
+        return {"follow_up_questions": follow_up_questions} 
+
+    except Exception as e:
+        print(e)
+        return {"follow_up_questions": [""]}
+
 
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):

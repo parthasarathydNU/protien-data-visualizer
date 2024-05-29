@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Markdown from 'react-markdown'
+import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import "./Chatbot.css";
-import { getAIResponse } from "../api";
+import { getAIResponse, getFollowUpQuestions } from "../api";
 
 interface Message {
   user?: string;
@@ -19,6 +19,11 @@ const Chatbot: React.FC = () => {
     },
   ]);
   const [loading, setLoading] = useState(false);
+  const [followUpQuestions, setFollowUpQuestions] = useState([
+    "How can you help me?",
+    "What are the main protein families available in the database",
+    "How can I find the average hydrophobicity of PF00063",
+  ]);
   const messageEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -29,26 +34,62 @@ const Chatbot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const askForFollowUp = async () => {
+    const payloadForFollowUp = {
+      query:
+        "Give me three followup questions that the user can ask based on the provided context.",
+      context: messages.map((msg: Message) =>
+        msg.bot
+          ? { role: "assistant", content: msg.bot }
+          : { role: "user", content: msg.user }
+      ),
+    };
+
+    const response: any = await getFollowUpQuestions(
+      payloadForFollowUp
+    );
+
+    console.log("follow up questions " , response.follow_up_questions)
+
+    if(response.follow_up_questions && response.follow_up_questions.length > 1 && response.follow_up_questions[0] !== "" ){
+        setFollowUpQuestions(response.follow_up_questions);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent, queryString?: string) => {
     e.preventDefault();
     setLoading(true);
-    setQuery("");
-    const newMessages = [...messages, { user: query }];
+
+    const newMessages = [...messages, { user: queryString || query  }];
     setMessages(newMessages);
-    
+
     const payload = {
-        query,
-        context: newMessages.map((msg) =>
-          msg.user
-            ? { role: "user", content: msg.user }
-            : { role: "assistant", content: msg.bot }
-        ),
-      }
-    
+      query,
+      context: newMessages.map((msg) =>
+        msg.user
+          ? { role: "user", content: msg.user }
+          : { role: "assistant", content: msg.bot }
+      ),
+    };
+
+    setQuery("");
+
     const response = await getAIResponse(payload);
 
     setMessages([...newMessages, { bot: response.response }]);
     setLoading(false);
+
+    askForFollowUp();
+
+  };
+
+  const handleChipClick = (
+    e: React.MouseEvent<HTMLDivElement>,
+    chipQuestion: string
+  ) => {
+    console.log(chipQuestion)
+    setQuery(chipQuestion);
+    handleSubmit(e, chipQuestion);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -69,13 +110,21 @@ const Chatbot: React.FC = () => {
             {msg.user ? (
               msg.user
             ) : (
-              <Markdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={[rehypeRaw]}
-              >
+              <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
                 {msg.bot}
               </Markdown>
             )}
+          </div>
+        ))}
+      </div>
+      <div className="chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center">
+        {followUpQuestions.map((question, index) => (
+          <div
+            key={index}
+            className="chip border-blue-300 border px-8 py-2 rounded-full cursor-pointer hover:shadow-sm text-base"
+            onClick={(e) => handleChipClick(e, question)}
+          >
+            {question}
           </div>
         ))}
       </div>

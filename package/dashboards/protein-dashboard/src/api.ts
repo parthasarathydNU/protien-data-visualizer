@@ -7,6 +7,11 @@ export const getAIResponse = async ( payload : any ) => {
   return response.data;
 }
 
+export const getFollowUpQuestions = async ( payload : any ) => {
+  const response = await axios.post(`${API_URL}/query_followup/`, payload);
+  return response.data;
+}
+
 export const fetchProteins = async () => {
   const response = await axios.get(`${API_URL}/proteins/`);
   return response.data;
