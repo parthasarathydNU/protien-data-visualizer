@@ -2,6 +2,10 @@
 
 This project is a comprehensive web application designed to interact with a protein database. It includes functionalities for creating, reading, updating, and deleting protein data, as well as advanced features like an AI chatbot for SQL query generation and visualizations using Three.js.
 
+## Check out the application
+- UI : https://app-gen-biomed.parthadhruv.com/
+- API: https://api-gen-biomed.parthadhruv.com/
+
 ## Architecture
 
 ![Sample Architecture](./images/SampleArchitecture.png)
