@@ -5,6 +5,7 @@ import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import "./Chatbot.css";
 import { getAIResponse, getFollowUpQuestions } from "../api";
+import LoadingSpinner from "./LoadingSpinner";
 
 interface Message {
   user?: string;
@@ -45,22 +46,27 @@ const Chatbot: React.FC = () => {
       ),
     };
 
-    const response: any = await getFollowUpQuestions(
-      payloadForFollowUp
-    );
+    const response: any = await getFollowUpQuestions(payloadForFollowUp);
 
-    console.log("follow up questions " , response.follow_up_questions)
-
-    if(response.follow_up_questions && response.follow_up_questions.length > 1 && response.follow_up_questions[0] !== "" ){
-        setFollowUpQuestions(response.follow_up_questions);
+    if (
+      response.follow_up_questions &&
+      response.follow_up_questions.length > 1 &&
+      response.follow_up_questions[0] !== ""
+    ) {
+      setFollowUpQuestions(response.follow_up_questions);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent, queryString?: string) => {
     e.preventDefault();
+
+    if (!queryString && (loading || !query || query.trim() === "") ) {
+      return;
+    }
+
     setLoading(true);
 
-    const newMessages = [...messages, { user: queryString || query  }];
+    const newMessages = [...messages, { user: queryString || query }];
     setMessages(newMessages);
 
     const payload = {
@@ -80,14 +86,13 @@ const Chatbot: React.FC = () => {
     setLoading(false);
 
     askForFollowUp();
-
   };
 
   const handleChipClick = (
     e: React.MouseEvent<HTMLDivElement>,
     chipQuestion: string
   ) => {
-    console.log(chipQuestion)
+    console.log(chipQuestion);
     setQuery(chipQuestion);
     handleSubmit(e, chipQuestion);
   };
@@ -138,8 +143,15 @@ const Chatbot: React.FC = () => {
             placeholder="Ask me anything..."
             className="input-field"
           />
-          <button type="submit" className="send-button">
-            {loading ? "Sending..." : "Send"}
+          <button
+            type="submit"
+            className={`send-button flex w-36 justify-center ${
+              (loading || query.trim() == "") && "loading"
+            }`}
+            disabled={loading}
+          >
+            {loading && <LoadingSpinner />}
+            {loading ? "Sending" : "Send"}
           </button>
         </div>
       </form>

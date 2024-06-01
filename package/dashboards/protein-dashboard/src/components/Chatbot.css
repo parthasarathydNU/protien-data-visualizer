@@ -64,11 +64,17 @@
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    
   }
-  
-  .send-button:hover {
-    background-color: #0056b3;
+
+  .send-button.loading {
+    cursor: default;
+    --tw-bg-opacity: 1;
+    background-color: rgb(241 245 249 / var(--tw-bg-opacity));
+    --tw-text-opacity: 1;
+    color: rgb(51 65 85 / var(--tw-text-opacity));
   }
+
   
   select {
     margin-left: 10px;
