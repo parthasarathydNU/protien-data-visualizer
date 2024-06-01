@@ -10,7 +10,7 @@ const Layout: React.FC = () => {
           <div className="space-x-4">
           <Link to="/chatbot" className="hover:underline">SQL Chat Bot</Link>
             {/* <Link to="/visualization" className="hover:underline">Visualize</Link> */}
-            <Link to="/add-protein" className="hover:underline">Add Protein</Link>
+            {/* <Link to="/add-protein" className="hover:underline">Add Protein</Link> */}
           </div>
         </nav>
       </header>
