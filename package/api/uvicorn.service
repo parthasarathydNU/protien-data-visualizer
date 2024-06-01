@@ -1,0 +1,16 @@
+[Unit]
+Description=Uvicorn ASGI server
+After=network.target
+
+[Service]
+User=ec2-user
+Group=ec2-user
+WorkingDirectory=/home/ec2-user/protien-data-visualizer/package/api
+ExecStart=/home/ec2-user/.local/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+# Optional: Configure logging
+StandardOutput=file:/var/log/uvicorn_stdout.log
+StandardError=file:/var/log/uvicorn_stderr.log
+
+[Install]
+WantedBy=multi-user.target
