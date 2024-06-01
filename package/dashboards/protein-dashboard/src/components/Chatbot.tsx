@@ -6,6 +6,7 @@ import rehypeRaw from "rehype-raw";
 import "./Chatbot.css";
 import { getAIResponse, getFollowUpQuestions } from "../api";
 import LoadingSpinner from "./LoadingSpinner";
+import AiResponseSkeleton from "./AiResponseSkeleton";
 
 interface Message {
   user?: string;
@@ -35,11 +36,20 @@ const Chatbot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  const cleanUpContext = ( context: Message[]) => {
+    return context.filter((context:Message) => {
+      if(context.bot) {
+        return context.bot!="Error in forming output"
+      }
+      return true;
+    })
+  }
+
   const askForFollowUp = async () => {
     const payloadForFollowUp = {
       query:
         "Give me three followup questions that the user can ask based on the provided context.",
-      context: messages.map((msg: Message) =>
+      context: cleanUpContext(messages).map((msg: Message) =>
         msg.bot
           ? { role: "assistant", content: msg.bot }
           : { role: "user", content: msg.user }
@@ -60,7 +70,7 @@ const Chatbot: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent, queryString?: string) => {
     e.preventDefault();
 
-    if (!queryString && (loading || !query || query.trim() === "") ) {
+    if (!queryString && (loading || !query || query.trim() === "")) {
       return;
     }
 
@@ -71,7 +81,7 @@ const Chatbot: React.FC = () => {
 
     const payload = {
       query,
-      context: newMessages.map((msg) =>
+      context: cleanUpContext(newMessages).map((msg) =>
         msg.user
           ? { role: "user", content: msg.user }
           : { role: "assistant", content: msg.bot }
@@ -121,6 +131,7 @@ const Chatbot: React.FC = () => {
             )}
           </div>
         ))}
+        {loading && <AiResponseSkeleton />}
       </div>
       <div className="chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center">
         {followUpQuestions.map((question, index) => (
