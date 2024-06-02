@@ -29,7 +29,7 @@ const DataVisualization: React.FC = () => {
 
   const getData = async (): Promise<Protein[]> => {
     const response = await fetchProteins();
-    return response;
+    return response || [];
   };
 
   useEffect(() => {

@@ -1,43 +1,33 @@
-import axios from 'axios';
+import { apiRequest } from './utils/apiUtils';
 
-const API_URL = process.env.REACT_APP_API_URL;
+export const getAIResponse = async (payload: any) => {
+  return apiRequest<any>({ method: 'post', url: 'query/', payload });
+};
 
-export const getAIResponse = async ( payload : any ) => {
-  const response = await axios.post(`${API_URL}/query/`, payload);
-  return response.data;
-}
-
-export const getFollowUpQuestions = async ( payload : any ) => {
-  const response = await axios.post(`${API_URL}/query_followup/`, payload);
-  return response.data;
-}
+export const getFollowUpQuestions = async (payload: any) => {
+  return apiRequest<any>({ method: 'post', url: 'query_followup/', payload });
+};
 
 export const fetchProteins = async () => {
-  const response = await axios.get(`${API_URL}/proteins/`);
-  return response.data;
+  return apiRequest<any[]>({ method: 'get', url: 'proteins/' });
 };
 
 export const fetchProteinCalculations = async (entry: string) => {
-  const response = await axios.get(`${API_URL}/get_protein_data/${entry}`);
-  return response.data;
+  return apiRequest<any>({ method: 'get', url: `get_protein_data/${entry}` });
 };
 
 export const fetchProtein = async (entry: string) => {
-  const response = await axios.get(`${API_URL}/proteins/${entry}`);
-  return response.data;
+  return apiRequest<any>({ method: 'get', url: `proteins/${entry}` });
 };
 
 export const createProtein = async (protein: any) => {
-  const response = await axios.post(`${API_URL}/proteins/`, protein);
-  return response.data;
+  return apiRequest<any>({ method: 'post', url: 'proteins/', payload: protein });
 };
 
 export const updateProtein = async (entry: string, protein: any) => {
-  const response = await axios.put(`${API_URL}/proteins/${entry}`, protein);
-  return response.data;
+  return apiRequest<any>({ method: 'put', url: `proteins/${entry}`, payload: protein });
 };
 
 export const deleteProtein = async (entry: string) => {
-  const response = await axios.delete(`${API_URL}/proteins/${entry}`);
-  return response.data;
+  return apiRequest<any>({ method: 'delete', url: `proteins/${entry}` });
 };

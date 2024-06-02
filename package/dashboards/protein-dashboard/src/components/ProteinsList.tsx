@@ -19,7 +19,7 @@ const ProteinsList: React.FC = () => {
   useEffect(() => {
     const getProteins = async () => {
       const data = await fetchProteins();
-      setProteins(data);
+      setProteins(data || []);
     };
     getProteins();
   }, []);
