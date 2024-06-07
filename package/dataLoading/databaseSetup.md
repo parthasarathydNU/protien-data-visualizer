@@ -1,5 +1,20 @@
 To create a new PostgreSQL database and the necessary tables for your protein data project through the `psql` command line interface, follow these steps. First, ensure you have PostgreSQL installed and the `psql` tool is accessible from your terminal or command prompt.
 
+### Step 0: Set up Postgres
+
+The following steps help with setting up a postgres instance running on port 5432
+```
+sudo yum update -y
+sudo yum install -y docker
+sudo service docker start
+sudo usermod -a -G docker ec2-user
+newgrp docker
+docker ps
+docker pull postgres
+docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+
+```
+
 ### Step 1: Log into PostgreSQL
 Open your terminal or command prompt and log into the PostgreSQL database as a superuser (often `postgres`), or as any user that has sufficient privileges to create databases and tables:
 
