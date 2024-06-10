@@ -24,10 +24,7 @@ const ProteinsList: React.FC = () => {
     getProteins();
   }, []);
 
-  const handleDelete = async (entry: string) => {
-    await deleteProtein(entry);
-    setProteins(proteins.filter((protein) => protein.entry !== entry));
-  };
+
 
   return (
     <div>
@@ -67,12 +64,6 @@ const ProteinsList: React.FC = () => {
                 >
                   Edit
                 </Link>
-                <button
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                  onClick={() => handleDelete(protein.entry)}
-                >
-                  Delete
-                </button>
               </td>
             </tr>
           ))}
