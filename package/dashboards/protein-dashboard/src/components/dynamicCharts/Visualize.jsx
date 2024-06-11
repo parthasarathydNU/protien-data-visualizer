@@ -19,7 +19,7 @@ import { useState } from "react";
 function Visualize() {
   const [specChart1, setSpecChart1] = useState(chart1VegaSpec);
   const [specChart2, setSpecChart2] = useState(chart2VegaSpec);
-  const [selectedSpec, setSelectedSpec] = useState();
+  const [selectedSpec, setSelectedSpec] = useState(chart1VegaSpec);
   return (
     <div className="visualize-page">
       <Fade>
