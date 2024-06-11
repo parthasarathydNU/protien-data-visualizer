@@ -8,6 +8,7 @@ import DataVisualization from "./components/charts/Viz";
 import ProteinDetail from "./components/ProteinDetail";
 import Chatbot from "./components/Chatbot";
 import ServiceDown from "./components/ServiceDown";
+import Visualize from "./components/dynamicCharts/Visualize";
 
 const App: React.FC = () => {
   return (
@@ -15,12 +16,14 @@ const App: React.FC = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<ProteinsList />} />
+          <Route path="/chatbot" element={<Chatbot />} />
+          <Route path="/explore" element={<Visualize />} />
           <Route path="add-protein" element={<AddProtein />} />
+
           <Route path="edit-protein" element={<EditProtein />} />
+          <Route path="/service-down" element={<ServiceDown />} />
           <Route path="/visualization" element={<DataVisualization />} />
           <Route path="/proteins/:entry" element={<ProteinDetail />} />
-          <Route path="/chatbot" element={<Chatbot />} />
-          <Route path="/service-down" element={<ServiceDown />} />
         </Route>
       </Routes>
     </Router>

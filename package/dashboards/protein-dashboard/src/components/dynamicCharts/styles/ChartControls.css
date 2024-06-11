@@ -1,0 +1,42 @@
+.controls-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    /* background-color: #f9f9f9; */
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .control-group {
+    margin-bottom: 15px;
+  }
+  
+  .control-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  .control-input,
+  .control-select,
+  .control-color {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .control-input {
+    height: 30px;
+  }
+  
+  .control-select {
+    height: 35px;
+  }
+  
+  .control-color {
+    height: 40px;
+    padding: 0;
+  }
+  

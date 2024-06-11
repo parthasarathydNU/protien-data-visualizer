@@ -1,0 +1,38 @@
+.visualize-page {
+    height: 100%;
+}
+
+.visualize-page .grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    height: 90%;
+    padding: 1rem;
+    background-color: white;
+}
+
+.charts-panel{
+    grid-column: 1 / 4;
+    display: flex;
+    flex-wrap: wrap;
+    height: 100%;
+    overflow-y: scroll;
+    gap: 2.5rem;
+}
+
+.chartDiv {
+    height: fit-content;
+    flex-basis: 35%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    
+    padding: 0.5rem;
+}
+
+.chartControls{
+    height: 100%;
+    overflow-y: auto;
+}
