@@ -98,7 +98,7 @@ DATABASE_URL=your_database_url
     ```sh
     cd package/api
     docker build -t protein-dashboard-backend .
-    docker run --env-file .env -p 8000:8000 protein-dashboard-backend
+    docker run --env-file .env -p 8000:8000 -v ./:/app protein-dashboard-backend
     ```
 
 2. **Frontend Setup**:
