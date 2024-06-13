@@ -1,8 +1,8 @@
-from llm import getLLM
-from database import db
-from prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION
+from lang_folder.llm import getLLM
+from lang_folder.database import db
+from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION
 from operator import itemgetter
-from vectorStore import vectorstore
+from lang_folder.vectorStore import vectorstore
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 from langchain.chains import LLMChain, create_sql_query_chain

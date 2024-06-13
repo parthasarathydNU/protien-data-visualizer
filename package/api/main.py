@@ -1,20 +1,21 @@
 import os
+import json
 from dotenv import load_dotenv
 from typing import List
-from fastapi import FastAPI, HTTPException
-from fastapi.encoders import jsonable_encoder
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from database import database, engine
 from models import protein_data
-from util_functions import remove_control_characters, process_protein_data
-from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_PROMPT
+from fastapi import FastAPI, HTTPException
 from protein import ProteinBase
-import json
-from contextlib import asynccontextmanager
-from sqlalchemy import select, text
+from database import database, engine
 import logging
-import openai
+from sqlalchemy import select, text
+from contextlib import asynccontextmanager
+from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_PROMPT
+from util_functions import remove_control_characters, process_protein_data
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+
+from lang_folder.agents import classify_input_string
 
 
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 # Retrieve OpenAI API key from environment variables
-openai.api_key = os.getenv('OPENAI_API_KEY')
+# openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
 @asynccontextmanager
@@ -185,6 +186,7 @@ async def format_data_as_markdown2(data: list) -> str:
     # for chunk in split_data(data):
     prompt = f"Given the following data '{data}', format it into a well-structured markdown format:\n\nReturn the response in markdown format."
     
+    return ""
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4o",
@@ -217,6 +219,8 @@ async def format_data_as_markdown(data: list, query: str) -> str:
             yield data[i:i + chunk_size]
     
     markdown_parts = []
+    return ""
+
     for chunk in split_data(data):
         prompt = f"Given the following data retrieved using the query '{query}', format it into a well-structured markdown format:\n\n{chunk}\n\nReturn the response in markdown format. Include the query below the result. Do not use ` backticks in the output"
         
@@ -240,6 +244,7 @@ async def format_data_as_markdown(data: list, query: str) -> str:
 async def query_followup(query_request: QueryRequest):
     messages = [CHAT_GPT_FOLLOWUP_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
     
+    return ""
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
@@ -272,9 +277,18 @@ async def query_followup(query_request: QueryRequest):
 
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):
-    print(query_request.context)
-    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
+    print(f"Data coming in to query : {query_request}")
+
+    # Pick the last conversation from the user
+    length = len(query_request.context)
+    lastEntry = query_request.context[length-1]
+    userQuery = lastEntry['content']
+
+    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context + [{"role": "user", "content": userQuery}]
     
+    # Check if given input is query or a conversation
+    print(f"the user input is classified as {classify_input_string(userQuery)}")
+    return {"response": "Error in forming output"}
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",

@@ -1,7 +1,7 @@
-from templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION
-from vectorStore import vectorstore
+from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION
+from lang_folder.vectorStore import vectorstore
 from langchain_openai import OpenAIEmbeddings
-from few_shot_examples import few_shot_examples
+from lang_folder.few_shot_examples import few_shot_examples
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewShotChatMessagePromptTemplate, PromptTemplate
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 
