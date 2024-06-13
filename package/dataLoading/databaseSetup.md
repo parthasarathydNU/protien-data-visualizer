@@ -2,7 +2,7 @@ To create a new PostgreSQL database and the necessary tables for your protein da
 
 ### Step 0: Set up Postgres
 
-The following steps help with setting up a postgres instance running on port 5432
+The following steps help with setting up a postgres instance running on port 5432. The following steps are for setting up postgres database within a docker container on a centos machine. Commands might change depending on your OS. For most operating systems once you have docker installed, you can skip the initial steps and begin from pulling the postgres image and starting the database.
 ```
 sudo yum update -y
 sudo yum install -y docker
@@ -12,8 +12,9 @@ newgrp docker
 docker ps
 docker pull postgres:15
 docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres:15
-
 ```
+
+The following steps explain how to set up the table structure for the app. Either you can follow the following steps if you have the `psql` cli installed or you can use PgAdmin GUI tool to connect to the database running on 5432 and set up the table structure. 
 
 ### Step 1: Log into PostgreSQL
 Open your terminal or command prompt and log into the PostgreSQL database as a superuser (often `postgres`), or as any user that has sufficient privileges to create databases and tables:
@@ -28,14 +29,14 @@ Replace `postgres` with your PostgreSQL superuser username if different.
 Once logged in, create a new database using the SQL `CREATE DATABASE` command. Replace `yourdatabase` with the name you want for your database:
 
 ```sql
-CREATE DATABASE generatebiomedicines;
+CREATE DATABASE proteinData;
 ```
 
 ### Step 3: Connect to Your New Database
 Connect to the database you just created to begin creating tables:
 
 ```sql
-\c generatebiomedicines
+\c proteinData
 ```
 
 ### Step 4: Create the Required Tables

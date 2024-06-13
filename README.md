@@ -58,9 +58,33 @@ The screenshot shows a tabbed interface for visualizing protein data. The active
 - Python 3.9+
 - PostgreSQL
 
+### Folder Structure
+
+```shell
+.
+├── LICENSE
+├── README.md
+├── images : This folder contains screenshots for the readme file
+└── package
+    ├── api : Code for the API service
+    ├── dashboards : Code for the frontend 
+    └── dataLoading : Tools to set up local database
+```
+
+
 ### Environment Variables
 
-Create a `.env` file in the root directory with the following content:
+#### Frontned
+
+Create a `.env` file in the following path `package/dashboards/protein-dashboard/.env` with the following content: 
+
+```env
+REACT_APP_API_URL=http://127.0.0.1:8000
+```
+
+#### Backend
+
+Create a `.env` file in the following path `package/api/.env` with the following content:
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
@@ -72,6 +96,7 @@ DATABASE_URL=your_database_url
 1. **Backend Setup**:
 
     ```sh
+    cd package/api
     docker build -t protein-dashboard-backend .
     docker run --env-file .env -p 8000:8000 protein-dashboard-backend
     ```
@@ -79,7 +104,7 @@ DATABASE_URL=your_database_url
 2. **Frontend Setup**:
 
     ```sh
-    cd frontend
+    cd package/dashboards/protein-dashboard
     npm install
     npm start
     ```
