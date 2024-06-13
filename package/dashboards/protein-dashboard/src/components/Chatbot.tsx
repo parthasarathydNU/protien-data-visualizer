@@ -88,9 +88,9 @@ const Chatbot: React.FC = () => {
       ),
     };
 
-    setQuery("");
-
     const response = await getAIResponse(payload);
+
+    setQuery("");
 
     setMessages([...newMessages, { bot: response.response }]);
     setLoading(false);

@@ -1,3 +1,5 @@
+import sys
+import os
 from llm import getLLM
 from database import db
 from chains import getGenerateQueryChain, getExecuteQueryChain, generate_query_and_execute_chain, parsed_query_output_chain, table_info_dynamic_few_shot_system_prompt_chain
@@ -18,8 +20,8 @@ llm = getLLM(model="gpt-3.5-turbo")
 # 1. Find if user input can be related to a query or a normal conversation
 user_query = "What is the average hydrophobicity of UPI00000001D7"
 print(user_query)
-# classification_result = classify_input_string(user_query)
-# print(f"The input string is classified as: {classification_result}")
+classification_result = classify_input_string(user_query)
+print(f"The input string is classified as: {classification_result}")
 
 
 # 2. Generating a query
