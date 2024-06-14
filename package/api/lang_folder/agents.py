@@ -32,7 +32,7 @@ def get_follow_up_questions_from_ai(conversation):
 
 def query_database(userQuery):
     print(f"user query : {userQuery}")
-    return generate_response_with_table_info.invoke({"question": userQuery, "table_descriptions" : table_descriptions })
+    return generate_response_with_table_info.invoke({"question": userQuery, "table_descriptions" : table_descriptions, "table_dialect" : db.dialect })
 
 
 table_descriptions = """
