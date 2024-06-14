@@ -1,8 +1,9 @@
-from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION, SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION
+from lang_folder.database import db
+from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY_TEMPLATE, SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE, SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION, TABLE_DETAILS_PROMPT_TEMPLATE
 from lang_folder.vectorStore import vectorstore
 from langchain_openai import OpenAIEmbeddings
 from lang_folder.few_shot_examples import few_shot_examples
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewShotChatMessagePromptTemplate, PromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, FewShotChatMessagePromptTemplate, PromptTemplate
 from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 
 INPUT_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
@@ -10,13 +11,18 @@ INPUT_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
 )
 
 ANSWER_USER_QUESTION_PROMPT = PromptTemplate.from_template(
-    FORMAT_ANSWER_FROM_QUERY
+    FORMAT_ANSWER_FROM_QUERY_TEMPLATE
 )
+
+TABLE_DETAILS_PROMPT  = PromptTemplate.from_template(
+    TABLE_DETAILS_PROMPT_TEMPLATE
+)
+
 
 
 # Normal Conversation with user
 GENERATE_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([
-    ("system", SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION),
+    ("system", SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE),
     # Means the template will receive an optional list of messages under
     # the "conversation" key
     ("placeholder", "{conversation}")
@@ -73,7 +79,7 @@ DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION = FewShotChatMessagePromptTemplat
 # This function needs an input parameter in the field "input" --> this is the user query
 GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION = ChatPromptTemplate.from_messages(
     [
-        ("system", SYSTEM_PROMPT_FOR_QUERY_GENERATION),
+        ("system", SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE),
         DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION,
         ("human", "{input}\n\nSQL: "),
     ]

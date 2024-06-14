@@ -38,7 +38,7 @@ Classification:
 
 
 
-FORMAT_ANSWER_FROM_QUERY = """
+FORMAT_ANSWER_FROM_QUERY_TEMPLATE = """
 Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
 Return the response in markdown format ensuring proper spacing, alignment , bullets, bold, various heading tags where required
@@ -48,7 +48,7 @@ SQL Query: {query}
 SQL Result: {result}
 Answer: """
 
-SYSTEM_PROMPT_FOR_QUERY_GENERATION = """
+SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE = """
 You are a MySQL expert. Given an input question, create a syntactically correct SQL query to run. Unless otherwise specificed.
 
 No Dangerous SQL Commands: Avoid generating queries that include potentially harmful SQL commands such as DROP, DELETE, UPDATE, INSERT, ALTER, TRUNCATE, or any other commands that can modify or delete data.,
@@ -67,7 +67,7 @@ Here is the relevant table info: {table_info}
 Below are a number of examples of questions and their corresponding SQL queries.
 """
 
-SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION = """
+SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE = """
 You are an intelligent assistant capable of having conversations about a protein database
 
 Here is some information about the database schema:
@@ -92,5 +92,18 @@ SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION = """
     Respond as a array of questions:  ["question 1" , "question 2" , "question 3", ...] 
 
     Ensure the array contains the required number of questions asked by the user questions.
+
+"""
+
+TABLE_DETAILS_PROMPT_TEMPLATE = """
+Return the names of ALL the SQL tables that MIGHT be relevant to the user question. 
+
+User question : 
+{question}
+
+The tables are:
+{table_descriptions}
+
+Remember to include ALL POTENTIALLY RELEVANT tables, even if you're not sure that they're needed.
 
 """
