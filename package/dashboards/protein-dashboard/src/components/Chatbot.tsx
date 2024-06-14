@@ -88,9 +88,9 @@ const Chatbot: React.FC = () => {
       ),
     };
 
-    const response = await getAIResponse(payload);
-
     setQuery("");
+
+    const response = await getAIResponse(payload);
 
     setMessages([...newMessages, { bot: response.response }]);
     setLoading(false);
@@ -133,7 +133,7 @@ const Chatbot: React.FC = () => {
         ))}
         {loading && <AiResponseSkeleton />}
       </div>
-      <div className="chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center">
+      <div className={`chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center ${loading ? "pointer-events-none opacity-50" : ""} `}>
         {followUpQuestions.map((question, index) => (
           <div
             key={index}

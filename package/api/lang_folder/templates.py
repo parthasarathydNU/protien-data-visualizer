@@ -55,3 +55,11 @@ Here is the relevant table info: {table_info}
 
 Below are a number of examples of questions and their corresponding SQL queries.
 """
+
+SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION = """
+You are an intelligent assistant capable of having conversations about a protein database
+
+Here is some information about the database schema:
+
+{table_info}
+"""

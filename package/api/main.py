@@ -13,9 +13,9 @@ from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_P
 from util_functions import remove_control_characters, process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
+from lang_folder.agents import classify_input_string, get_ai_response_for_conversation, query_database
 from fastapi.middleware.cors import CORSMiddleware
 
-from lang_folder.agents import classify_input_string
 
 
 logging.basicConfig(level=logging.INFO)
@@ -284,11 +284,24 @@ async def query_model(query_request: QueryRequest):
     lastEntry = query_request.context[length-1]
     userQuery = lastEntry['content']
 
-    messages = [CHAT_GPT_SYSTEM_PROMPT] + query_request.context + [{"role": "user", "content": userQuery}]
+    updatedContext =  query_request.context + [{"role": "user", "content": userQuery}]
+
+    messages = [CHAT_GPT_SYSTEM_PROMPT] + updatedContext
     
     # Check if given input is query or a conversation
-    print(f"the user input is classified as {classify_input_string(userQuery)}")
-    return {"response": "Error in forming output"}
+    classification = classify_input_string(userQuery)
+    print(f"the user input is classified as {classification}")
+
+    # If it is a normal question, then just pass it along to the conversation chain
+    if classification == "conversation":
+        print(f"updated context {updatedContext}")
+        # Invoke the LLMChain to get the response
+        result = get_ai_response_for_conversation(updatedContext)
+        return {"response": result}
+    else :
+        result = query_database(userQuery)
+        # Else pass it to the query generation chain
+        return {"response": result}
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",

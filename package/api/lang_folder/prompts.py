@@ -1,4 +1,4 @@
-from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION
+from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION
 from lang_folder.vectorStore import vectorstore
 from langchain_openai import OpenAIEmbeddings
 from lang_folder.few_shot_examples import few_shot_examples
@@ -14,10 +14,33 @@ ANSWER_USER_QUESTION_PROMPT = PromptTemplate.from_template(
 )
 
 
+# Normal Conversation with user
+GENERATE_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION),
+    # Means the template will receive an optional list of messages under
+    # the "conversation" key
+    ("placeholder", "{conversation}")
+    # Equivalently:
+    # MessagesPlaceholder(variable_name="conversation", optional=True)
+])
+
+# prompt_value = normal_conversation_prompt_template.invoke(
+#     {
+#         "conversation": [
+#             ("human", "Hi!"),
+#             ("ai", "How can I assist you today?"),
+#             ("human", "Can you make me an ice cream sundae?"),
+#             ("ai", "No.")
+#         ],
+#         "table_info" : ""
+#     }
+# )
+
+
 # Few Shot Examples for forming the queries
 # The passed in examples should be of type 
 # {"input": "String", "query": "SQL Query String"}
-example_prompt_for_few_shot = ChatPromptTemplate.from_messages(
+_example_prompt_for_few_shot = ChatPromptTemplate.from_messages(
     [
         ("human", "{input}\nSQLQuery:"),
         ("ai", "{query}"),
@@ -27,7 +50,7 @@ example_prompt_for_few_shot = ChatPromptTemplate.from_messages(
 # This few shot prompt is just like we pass a few examples to 
 # the LLM as support before we let it answer any question
 FEW_SHOT_PROMPT = FewShotChatMessagePromptTemplate(
-    example_prompt=example_prompt_for_few_shot,
+    example_prompt=_example_prompt_for_few_shot,
     examples=few_shot_examples, # {"input": "String", "query": "SQL Query String"}[]
     input_variables=["input"], # The variable holds the value sent from the user 
 )
@@ -43,7 +66,7 @@ def _getSemanticExampleSelectorChain(top_k = 2, input_field="input"):
 
 # Whenever this prompt is used, it comes along with the few shot examples selected
 DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION = FewShotChatMessagePromptTemplate(
-    example_prompt=example_prompt_for_few_shot,
+    example_prompt=_example_prompt_for_few_shot,
     example_selector=_getSemanticExampleSelectorChain(), # Here rather than passing in all the examples, we pass in the example selector object 
     input_variables=["input","top_k", "table_info"],
 )
