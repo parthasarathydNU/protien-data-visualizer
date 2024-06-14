@@ -62,6 +62,7 @@ Do not return data from the organisms, protein_names and organism_id columns in 
 Do not return sequence, amino_acid_composition and secondary_structure, unless explicitly asked for,
 Only use valid SQL constructs
 
+Here is information about the table dialect: {table_dialect}. Only generate queries that work with this dialect {table_dialect}.
 Here is the relevant table info: {table_info}
 
 Below are a number of examples of questions and their corresponding SQL queries.
