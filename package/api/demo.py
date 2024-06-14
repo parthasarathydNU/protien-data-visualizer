@@ -1,10 +1,10 @@
 import sys
 import os
-from llm import getLLM
-from database import db
-from chains import getGenerateQueryChain, getExecuteQueryChain, generate_query_and_execute_chain, parsed_query_output_chain, table_info_dynamic_few_shot_system_prompt_chain
-from prompts import INPUT_CLASSIFICATION_PROMPT, DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION
-from agents import classify_input_string
+from lang_folder.llm import getLLM
+from lang_folder.database import db
+from lang_folder.chains import getGenerateQueryChain, getExecuteQueryChain, generate_query_and_execute_chain, parsed_query_output_chain, table_info_dynamic_few_shot_system_prompt_chain, table_chain
+from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION
+from lang_folder.agents import classify_input_string
 print("Hello")
 
 # print(db.get_usable_table_names())
@@ -23,6 +23,9 @@ print(user_query)
 classification_result = classify_input_string(user_query)
 print(f"The input string is classified as: {classification_result}")
 
+# Selecting a table based on user query
+selected_tables = table_chain.invoke({"question": "What is the average hydrophobicity of UPI00000001D7"})
+print(selected_tables)
 
 # 2. Generating a query
 # generate_query = getGenerateQueryChain(llm)
@@ -39,17 +42,17 @@ print(f"The input string is classified as: {classification_result}")
 # print(combined_result)
 
 # 5. Formatting the answer in a readable format
-clean_result = parsed_query_output_chain.invoke({"question": user_query})
-print(clean_result)
+# clean_result = parsed_query_output_chain.invoke({"question": user_query})
+# print(clean_result)
 
-print("\nDynamic few shot selected examples for given input")
+# print("\nDynamic few shot selected examples for given input")
 # 6. Checking how the prompt would look with pasing in the few shot prompts as well
 # print(DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION.format(input=user_query, top_k=3))
 
-print("\nPrompt to send to llm to generate query along with table info, selected few shot prompts and user info")
-print(GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION.format(input=user_query, top_k=3, table_info="Pass table information in here"))
+# print("\nPrompt to send to llm to generate query along with table info, selected few shot prompts and user info")
+# print(GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION.format(input=user_query, top_k=3, table_info="Pass table information in here"))
 
 # 7. Invoking chain alon with table data, few shot examples and system prompt
-print("\nInvoking chain alon with table data, few shot examples and system prompt")
-clean_result = table_info_dynamic_few_shot_system_prompt_chain.invoke({"question": user_query})
-print(clean_result)
+# print("\nInvoking chain alon with table data, few shot examples and system prompt")
+# clean_result = table_info_dynamic_few_shot_system_prompt_chain.invoke({"question": user_query})
+# print(clean_result)
