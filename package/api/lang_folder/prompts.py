@@ -1,4 +1,4 @@
-from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION
+from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY, SYSTEM_PROMPT_FOR_QUERY_GENERATION, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION, SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION
 from lang_folder.vectorStore import vectorstore
 from langchain_openai import OpenAIEmbeddings
 from lang_folder.few_shot_examples import few_shot_examples
@@ -24,18 +24,11 @@ GENERATE_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([
     # MessagesPlaceholder(variable_name="conversation", optional=True)
 ])
 
-# prompt_value = normal_conversation_prompt_template.invoke(
-#     {
-#         "conversation": [
-#             ("human", "Hi!"),
-#             ("ai", "How can I assist you today?"),
-#             ("human", "Can you make me an ice cream sundae?"),
-#             ("ai", "No.")
-#         ],
-#         "table_info" : ""
-#     }
-# )
-
+# Follow up questions that user can ask
+GENERATE_FOLLOW_UP_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([
+   ("system", SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION),
+   ("placeholder", "{conversation}")
+])
 
 # Few Shot Examples for forming the queries
 # The passed in examples should be of type 

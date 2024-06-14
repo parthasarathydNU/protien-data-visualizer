@@ -13,7 +13,7 @@ from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_P
 from util_functions import remove_control_characters, process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from lang_folder.agents import classify_input_string, get_ai_response_for_conversation, query_database
+from lang_folder.agents import classify_input_string, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -170,105 +170,20 @@ async def delete_protein(entry: str):
     return {"message": "Protein deleted successfully"}
 
 
-async def format_data_as_markdown2(data: list) -> str:
-    """
-    Format the query result data into markdown using OpenAI's API.
-    
-    :param data: The data to format.
-    :return: A markdown-formatted string.
-    """
-
-    # def split_data(data, chunk_size=100):
-    #     """ Split data into smaller chunks to avoid exceeding token limit. """
-    #     for i in range(0, len(data), chunk_size):
-    #         yield data[i:i + chunk_size]
-    
-    # for chunk in split_data(data):
-    prompt = f"Given the following data '{data}', format it into a well-structured markdown format:\n\nReturn the response in markdown format."
-    
-    return ""
-    try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": "You are an assistant that formats data into markdown. You only return the final output, no fillers. You suggest a couple of queries that the user can ask next to the chatbot."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        content = response.choices[0].message['content']
-
-        return content
-        
-    except Exception as e:
-        raise Exception(f"Error in formatting data as markdown: {e}")
-    
-    
-
-async def format_data_as_markdown(data: list, query: str) -> str:
-    """
-    Format the query result data into markdown using OpenAI's API.
-    
-    :param data: The data to format.
-    :param query: The query that was used to generate the data.
-    :return: A markdown-formatted string.
-    """
-
-    def split_data(data, chunk_size=100):
-        """ Split data into smaller chunks to avoid exceeding token limit. """
-        for i in range(0, len(data), chunk_size):
-            yield data[i:i + chunk_size]
-    
-    markdown_parts = []
-    return ""
-
-    for chunk in split_data(data):
-        prompt = f"Given the following data retrieved using the query '{query}', format it into a well-structured markdown format:\n\n{chunk}\n\nReturn the response in markdown format. Include the query below the result. Do not use ` backticks in the output"
-        
-        try:
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo-16k-0613",
-                messages=[
-                    {"role": "system", "content": "You are an assistant that formats data into markdown. You only return the final output, no fillers."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            content = response.choices[0].message['content']
-            markdown_parts.append(content)
-        except Exception as e:
-            raise Exception(f"Error in formatting data as markdown: {e}")
-    
-    return "\n".join(markdown_parts)
-
 
 @app.post("/query_followup/")
 async def query_followup(query_request: QueryRequest):
     messages = [CHAT_GPT_FOLLOWUP_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
-    
-    return ""
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages
-        )
-        content = response.choices[0].message['content']
-
-        print("Initial response ", content)
-
-        content = remove_control_characters(content)
-
-        print("Removed control chars  ", content)
-
-        # Parse the JSON response from the model
-        response_json = json.loads(content)              
-
-        follow_up_questions = response_json.get("follow_up_questions", [])
+        
+        follow_up_questions = get_follow_up_questions_from_ai(messages)
 
         print("Follow up questions: ", follow_up_questions)
 
         if not follow_up_questions:
             return {"follow_up_questions": [""]}
 
-        return {"follow_up_questions": follow_up_questions} 
+        return follow_up_questions
 
     except Exception as e:
         print(e)
@@ -277,65 +192,29 @@ async def query_followup(query_request: QueryRequest):
 
 @app.post("/query/")
 async def query_model(query_request: QueryRequest):
-    print(f"Data coming in to query : {query_request}")
+
+    print(f"\nData coming in to query : {query_request}")
 
     # Pick the last conversation from the user
     length = len(query_request.context)
     lastEntry = query_request.context[length-1]
     userQuery = lastEntry['content']
 
-    updatedContext =  query_request.context + [{"role": "user", "content": userQuery}]
-
-    messages = [CHAT_GPT_SYSTEM_PROMPT] + updatedContext
-    
-    # Check if given input is query or a conversation
-    classification = classify_input_string(userQuery)
-    print(f"the user input is classified as {classification}")
-
-    # If it is a normal question, then just pass it along to the conversation chain
-    if classification == "conversation":
-        print(f"updated context {updatedContext}")
-        # Invoke the LLMChain to get the response
-        result = get_ai_response_for_conversation(updatedContext)
-        return {"response": result}
-    else :
-        result = query_database(userQuery)
-        # Else pass it to the query generation chain
-        return {"response": result}
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=messages
-        )
-        content = response.choices[0].message['content']
+        
+        # Check if given input is query or a conversation
+        classification = classify_input_string(userQuery)
+        print(f"\nThe user input is classified as {classification}")
 
-        print("Initial response ", content)
-
-        content = remove_control_characters(content)
-
-        print("Removed control chars  ", content)
-
-        # Parse the JSON response from the model
-        response_json = json.loads(content)              
-
-        response_type = response_json.get("type")
-        response_content = response_json.get("content")
-
-        print("printing both ", response_json, response_content)
-
-        if response_type == "query":
-            # Execute the SQL query using raw SQL
-            with engine.connect() as conn:
-                result = conn.execute(text(response_content)).fetchall()
-                print("query result ", result)
-                print("get markdown result of query content")
-                markdown_result = await format_data_as_markdown(result, response_content)
-                return { "response": markdown_result}   
-        else:
-            print("get markdown result of response ")
-            # markdown_result = await format_data_as_markdown2(response_content)
-            return { "response": response_content}   
-
+        # If it is a normal question, then just pass it along to the conversation chain
+        if classification == "conversation":
+            # Invoke the LLMChain to get the response
+            result = get_ai_response_for_conversation(query_request.context)
+            return {"response": result}
+        else :
+            result = query_database(userQuery)
+            # Else pass it to the query generation chain
+            return {"response": result}
 
     except Exception as e:
         print(e)

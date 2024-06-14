@@ -1,6 +1,6 @@
 from lang_folder.llm import getLLM
 from lang_folder.database import db
-from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION, GENERATE_CONVERSATION_PROMPT
+from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION, GENERATE_CONVERSATION_PROMPT, GENERATE_FOLLOW_UP_CONVERSATION_PROMPT
 from operator import itemgetter
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
@@ -22,7 +22,8 @@ generate_query_chain = getGenerateQueryChain(llm=getLLM(model="gpt-4"), prompt_t
 generate_query_chain_with_table_info_and_few_shot_examples = getGenerateQueryChain(getLLM(model="gpt-4"), GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION)
 execute_query_chain = QuerySQLDataBaseTool(db=db)
 # Create the LLM chain for the conversation
-conversation_chain = GENERATE_CONVERSATION_PROMPT | getLLM(model="gpt-4") | StrOutputParser()
+conversation_chain = GENERATE_CONVERSATION_PROMPT | getLLM() | StrOutputParser()
+follow_up_questions_chain = GENERATE_FOLLOW_UP_CONVERSATION_PROMPT | getLLM() | StrOutputParser()
 
 # combined chains
 generate_query_and_execute_chain  = generate_query_chain | execute_query_chain
