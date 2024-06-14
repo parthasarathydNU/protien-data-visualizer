@@ -7,6 +7,7 @@ import "./Chatbot.css";
 import { getAIResponse, getFollowUpQuestions } from "../api";
 import LoadingSpinner from "./LoadingSpinner";
 import AiResponseSkeleton from "./AiResponseSkeleton";
+import { Fade } from "react-awesome-reveal";
 
 interface Message {
   user?: string;
@@ -36,14 +37,14 @@ const Chatbot: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
-  const cleanUpContext = ( context: Message[]) => {
-    return context.filter((context:Message) => {
-      if(context.bot) {
-        return context.bot!="Error in forming output"
+  const cleanUpContext = (context: Message[]) => {
+    return context.filter((context: Message) => {
+      if (context.bot) {
+        return context.bot != "Error in forming output";
       }
       return true;
-    })
-  }
+    });
+  };
 
   const askForFollowUp = async () => {
     const payloadForFollowUp = {
@@ -58,12 +59,13 @@ const Chatbot: React.FC = () => {
 
     const response: any = await getFollowUpQuestions(payloadForFollowUp);
 
+    let {follow_up_questions} = JSON.parse(response);
     if (
-      response.follow_up_questions &&
-      response.follow_up_questions.length > 1 &&
-      response.follow_up_questions[0] !== ""
+      follow_up_questions &&
+      follow_up_questions.length > 1 &&
+      follow_up_questions[0] !== ""
     ) {
-      setFollowUpQuestions(response.follow_up_questions);
+      setFollowUpQuestions(follow_up_questions);
     }
   };
 
@@ -118,22 +120,32 @@ const Chatbot: React.FC = () => {
     <div className="chatbot">
       <div className="messages">
         {messages.map((msg, index) => (
-          <div
-            key={index}
-            className={msg.user ? "message user" : "message bot"}
-          >
-            {msg.user ? (
-              msg.user
-            ) : (
-              <Markdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>
-                {msg.bot}
-              </Markdown>
-            )}
-          </div>
+          <Fade>
+            <div
+              key={index}
+              className={msg.user ? "message user" : "message bot"}
+            >
+              {msg.user ? (
+                msg.user
+              ) : (
+                <Markdown
+                  remarkPlugins={[remarkGfm]}
+                  rehypePlugins={[rehypeRaw]}
+                >
+                  {msg.bot}
+                </Markdown>
+              )}
+            </div>
+          </Fade>
         ))}
         {loading && <AiResponseSkeleton />}
+        <div ref={messageEndRef} /> {/* Empty div at the end of the messages */}
       </div>
-      <div className={`chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center ${loading ? "pointer-events-none opacity-50" : ""} `}>
+      <div
+        className={`chips-container p-4 bg-transparent flex flex-wrap gap-2 justify-center ${
+          loading ? "pointer-events-none opacity-50" : ""
+        } `}
+      >
         {followUpQuestions.map((question, index) => (
           <div
             key={index}
