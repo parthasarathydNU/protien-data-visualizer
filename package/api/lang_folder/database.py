@@ -7,4 +7,4 @@ load_dotenv()
 
 DATABASE_URL = os.getenv('DATABASE_URL')
 
-db = SQLDatabase.from_uri(DATABASE_URL)
+db = SQLDatabase.from_uri(DATABASE_URL, sample_rows_in_table_info=1)
