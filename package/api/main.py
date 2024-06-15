@@ -212,7 +212,7 @@ async def query_model(query_request: QueryRequest):
             result = get_ai_response_for_conversation(query_request.context)
             return {"response": result}
         else :
-            result = query_database(userQuery)
+            result = query_database(userQuery, query_request.context[:-1])
             # Else pass it to the query generation chain
             return {"response": result}
 

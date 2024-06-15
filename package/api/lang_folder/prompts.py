@@ -81,6 +81,7 @@ GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION = ChatPromptTemplate.from_messages
     [
         ("system", SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE),
         DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION,
+        ("placeholder", "{conversation}"),
         ("human", "{input}\n\nSQL: "),
     ]
 )
