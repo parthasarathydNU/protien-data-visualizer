@@ -25,14 +25,12 @@ def get_ai_response_for_conversation(conversation):
 
 def get_follow_up_questions_from_ai(conversation):
     formatted_conversation = [('ai' if entry["role"] == 'assistant' else 'human', entry["content"]) for entry in conversation]
-    print(f"formatted_conversation {formatted_conversation}")
     result = follow_up_questions_chain.invoke({"table_info" : db.table_info , "conversation" : formatted_conversation})
-    print(f"Result from ai {result}")
     return result
 
-def query_database(userQuery):
-    print(f"user query : {userQuery}")
-    return generate_response_with_table_info.invoke({"question": userQuery, "table_descriptions" : table_descriptions, "table_dialect" : db.dialect })
+def query_database(userQuery, conversation):
+    formatted_conversation = [('ai' if entry["role"] == 'assistant' else 'human', entry["content"]) for entry in conversation]
+    return generate_response_with_table_info.invoke({"question": userQuery, "table_descriptions" : table_descriptions, "table_dialect" : db.dialect, "conversation" : formatted_conversation })
 
 
 table_descriptions = """
