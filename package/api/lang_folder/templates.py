@@ -1,6 +1,6 @@
 # Input text classification prompts
 # Define the input classification prompt template with few-shot examples
-INPUT_CLASSIFICATION_PROMPT_TEMPLATE = INPUT_CLASSIFICATION_PROMPT_TEMPLATE = """
+INPUT_CLASSIFICATION_PROMPT_TEMPLATE = """
 Please classify the following input string as either a 'query' or 'conversation'. A 'query' directly uses SQL commands or clearly implies a need for an SQL query to retrieve data from a database. A 'conversation' includes dialogue unrelated to database operations or ambiguous questions that require further clarification before proceeding.
 
 Classification categories:
