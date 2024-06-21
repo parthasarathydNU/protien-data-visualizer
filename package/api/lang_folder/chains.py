@@ -73,14 +73,6 @@ parsed_query_output_chain = (
     | format_query_answer_chain
 )
 
-# Combined chain that generates a query with information about the table and few shot examples
-# Then executes the query and finally fomrats the answer
-# table_info_dynamic_few_shot_system_prompt_chain = (
-#     RunnablePassthrough.assign(query=generate_query_chain_with_table_info_and_few_shot_examples).assign(
-#         result= itemgetter("query") | execute_query_chain
-#     )
-#     | format_query_answer_chain
-# )
 
 # Combined chain that first fetches relevant tables
 # Then generates query with the table details of te relevant table and few shot examples
