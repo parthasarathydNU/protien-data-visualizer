@@ -24,7 +24,7 @@ def get_ai_response_for_conversation(conversation):
     return result
 
 def get_follow_up_questions_from_ai(conversation):
-    formatted_conversation = [('ai' if entry["role"] == 'assistant' else 'human', entry["content"]) for entry in conversation]
+    formatted_conversation = [('ai' if entry["role"] == 'assistant' or entry["role"] == 'system' else 'human', entry["content"]) for entry in conversation]
     result = follow_up_questions_chain.invoke({"table_info" : db.table_info , "conversation" : formatted_conversation})
     return result
 
