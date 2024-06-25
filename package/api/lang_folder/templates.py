@@ -1,11 +1,11 @@
 # Input text classification prompts
 # Define the input classification prompt template with few-shot examples
 INPUT_CLASSIFICATION_PROMPT_TEMPLATE = """
-Please classify the following input string as either a 'query' or 'conversation'. A 'query' directly uses SQL commands or clearly implies a need for an SQL query to retrieve data from a database. A 'conversation' includes dialogue unrelated to database operations or ambiguous questions that require further clarification before proceeding.
+Classify the input as 'query' or 'conversation'.
 
-Classification categories:
-1. query
-2. conversation
+Definitions:
+- 'Query': Uses SQL or implies data retrieval from a database.
+- 'Conversation': Dialogue unrelated to SQL or needs clarification.
 
 Examples:
 Input: "SELECT name, age FROM users WHERE age > 30"
@@ -20,18 +20,14 @@ Classification: conversation
 Input: "Can you help me find the average age of users?"
 Classification: query
 
-Input: "Give me a report of all proteins associated with a specific function or disease."
-Classification: conversation
-
 Input: "Tell me a joke."
 Classification: conversation
 
-
 Guidelines:
-- Direct SQL commands or clear SQL query suggestions should be classified as 'query'.
-- Casual dialogue or ambiguous queries needing clarification should be classified as 'conversation'.
+- SQL commands or clear query suggestions: 'query'.
+- Casual dialogue or ambiguous queries: 'conversation'.
 
-Now, classify the following input:
+Classify this input:
 Input: "{input_string}"
 Classification:
 """
