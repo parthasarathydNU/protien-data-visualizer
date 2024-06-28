@@ -196,9 +196,7 @@ async def query_model(query_request: QueryRequest):
     print(f"\nData coming in to query : {query_request}")
 
     # Pick the last conversation from the user
-    length = len(query_request.context)
-    lastEntry = query_request.context[length-1]
-    userQuery = lastEntry['content']
+    userQuery = query_request.query
 
     try:
         
@@ -219,5 +217,5 @@ async def query_model(query_request: QueryRequest):
     except Exception as e:
         print(e)
         # raise HTTPException(status_code=500, detail=str(e))
-        return {"response": "Error in forming output"}
+        return {"response": "Error in forming output "+ e}
     
