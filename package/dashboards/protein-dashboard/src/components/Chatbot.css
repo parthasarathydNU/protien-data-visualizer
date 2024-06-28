@@ -75,6 +75,13 @@
     color: rgb(51 65 85 / var(--tw-text-opacity));
   }
 
+  .send-button.disabled {
+    cursor: default;
+    background-color: #F9F9F9;
+    color: gray;
+
+  }
+
   
   select {
     margin-left: 10px;
@@ -83,3 +90,8 @@
     border-radius: 5px;
   }
   
+  @media screen and (max-width: 700px) {
+    .chips-container{
+      display: none;
+    }
+  }
