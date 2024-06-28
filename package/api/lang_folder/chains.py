@@ -2,7 +2,7 @@ from typing import List
 from operator import itemgetter
 from lang_folder.llm import getLLM
 from langchain.chains import create_sql_query_chain
-from lang_folder.models import TableList
+from lang_folder.models import TableList, FollowUpQueries
 from lang_folder.database import db
 from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION, GENERATE_CONVERSATION_PROMPT, GENERATE_FOLLOW_UP_CONVERSATION_PROMPT, TABLE_DETAILS_PROMPT
 from langchain_core.runnables import RunnablePassthrough
@@ -50,10 +50,10 @@ generate_query_chain_with_table_info_and_few_shot_examples = getGenerateQueryCha
 execute_query_chain = QuerySQLDataBaseTool(db=db)
 
 # Normal conversation with bot
-conversation_chain = GENERATE_CONVERSATION_PROMPT | getLLM() | StrOutputParser()
+conversation_chain = GENERATE_CONVERSATION_PROMPT | getLLM(model="gpt-4o") | StrOutputParser()
 
 # Generate follow up questsion for users
-follow_up_questions_chain = GENERATE_FOLLOW_UP_CONVERSATION_PROMPT | getLLM() | StrOutputParser()
+follow_up_questions_chain = GENERATE_FOLLOW_UP_CONVERSATION_PROMPT | getLLM(model="gpt-4").with_structured_output(FollowUpQueries)
 
 # Get the apt table name for the current context
 structured_table_llm = getLLM(model="gpt-4").with_structured_output(TableList)
