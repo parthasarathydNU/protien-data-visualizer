@@ -6,13 +6,23 @@ import "./Chatbot.css";
 import LoadingSpinner from "./LoadingSpinner";
 import AiResponseSkeleton from "./AiResponseSkeleton";
 import { Fade } from "react-awesome-reveal";
-import { AIRequestPayload, FollowUpQuestionsResponse, Message, MessageRolesEnum } from "../api";
+import {
+  AIRequestPayload,
+  FollowUpQuestionsResponse,
+  Message,
+  MessageContentTypeEnum,
+  MessageRolesEnum,
+} from "../api";
+import VegaChart from "./dynamicCharts/VegaChart";
 
 interface ReusableChatbotProps {
   initialMessage: string;
   followUpQuestionsInitial: string[];
   getAIResponse: (payload: AIRequestPayload) => Promise<any>;
-  getFollowUpQuestions: (payload: AIRequestPayload) => Promise<FollowUpQuestionsResponse>;
+  getFollowUpQuestions: (
+    payload: AIRequestPayload
+  ) => Promise<FollowUpQuestionsResponse>;
+  chartData?: any;
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -20,6 +30,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   followUpQuestionsInitial,
   getAIResponse,
   getFollowUpQuestions,
+  chartData,
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -57,7 +68,11 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     });
     setMessages([
       ...newMessages,
-      { role: MessageRolesEnum.assistant, content: response.response },
+      {
+        role: MessageRolesEnum.assistant,
+        content: response.response,
+        type: response.type,
+      },
     ]);
     setLoading(false);
     askForFollowUp();
@@ -96,6 +111,10 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
             >
               {msg.role == MessageRolesEnum.human ? (
                 msg.content
+              ) : msg.type == MessageContentTypeEnum.chart ? (
+                <div className="flex justify-center">
+                  <VegaChart data={chartData} spec={msg.content} />
+                </div>
               ) : (
                 <Markdown
                   remarkPlugins={[remarkGfm]}

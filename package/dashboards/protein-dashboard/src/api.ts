@@ -1,23 +1,34 @@
 import { apiRequest } from "./utils/apiUtils";
 export enum MessageRolesEnum {
   assistant,
-human,
+  human,
 }
-export type Message = { role: MessageRolesEnum; content: string };
+export enum MessageContentTypeEnum {
+  chart,
+  text
+}
+
+export type Message = {
+  role: MessageRolesEnum;
+  content: string;
+  type?: MessageContentTypeEnum;
+};
 export type AIRequestPayload = {
   query: string;
   context: Message[];
 };
 
 export type FollowUpQuestionsResponse = {
-  follow_up_questions: string[]
-}
+  follow_up_questions: string[];
+};
 
 export const getAIResponse = async (payload: AIRequestPayload) => {
   return apiRequest<any>({ method: "post", url: "query/", payload });
 };
 
-export const getFollowUpQuestions = async (payload: AIRequestPayload) : Promise<FollowUpQuestionsResponse> => {
+export const getFollowUpQuestions = async (
+  payload: AIRequestPayload
+): Promise<FollowUpQuestionsResponse> => {
   return apiRequest<any>({ method: "post", url: "query_followup/", payload });
 };
 
