@@ -3,7 +3,6 @@ from pydantic import BaseModel
 class QueryRequest(BaseModel):
     query: str
     context: list = None  # To maintain the conversation context
-    use_openai: bool = False  # Flag to decide which model to use
 
 
 class QueryResponse(BaseModel):
