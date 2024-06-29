@@ -4,25 +4,43 @@ export enum MessageRolesEnum {
   human,
 }
 export enum MessageContentTypeEnum {
-  chart,
-  text
+  chart="chart",
+  conversation="conversation",
 }
 
 export type Message = {
   role: MessageRolesEnum;
   content: string;
-  type?: MessageContentTypeEnum;
+  type: MessageContentTypeEnum;
 };
+
 export type AIRequestPayload = {
   query: string;
   context: Message[];
 };
 
+export type AIResponsePayload = {
+  type: MessageContentTypeEnum,
+  response: string;
+}
+
 export type FollowUpQuestionsResponse = {
   follow_up_questions: string[];
 };
 
-export const getAIResponse = async (payload: AIRequestPayload) => {
+export type AIChartQueryRequest = AIRequestPayload & { table_name: string };
+
+export type AIChatBotRequestTypes = AIRequestPayload | AIChartQueryRequest;
+
+export type AIChatBotResponseTypes = AIResponsePayload;
+
+export const getAIChartResponse = async (
+  payload: AIChartQueryRequest
+): Promise<AIResponsePayload> => {
+  return apiRequest<any>({ method: "post", url: "query_chart", payload });
+};
+
+export const getAIResponse = async (payload: AIRequestPayload): Promise<AIResponsePayload> => {
   return apiRequest<any>({ method: "post", url: "query/", payload });
 };
 
