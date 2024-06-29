@@ -27,6 +27,7 @@ interface ReusableChatbotProps {
     payload: AIRequestPayload
   ) => Promise<FollowUpQuestionsResponse>;
   chartData?: any;
+  followUpQuestionsCount?: number;
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -35,6 +36,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   getAIResponse,
   getFollowUpQuestions,
   chartData,
+  followUpQuestionsCount = 3
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -88,7 +90,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
       context: messages,
     });
     if (follow_up_questions) {
-      setFollowUpQuestions(follow_up_questions);
+      setFollowUpQuestions(follow_up_questions.slice(0, followUpQuestionsCount));
     }
   };
 
