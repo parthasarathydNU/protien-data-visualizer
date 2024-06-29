@@ -5,11 +5,6 @@ class QueryRequest(BaseModel):
     query: str
     context: list = None  # To maintain the conversation context
 
-
-class QueryResponse(BaseModel):
-    response: str
-    context: list
-
 # Define the Table model
 class Table(BaseModel):
     """Table in SQL database."""
