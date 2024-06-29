@@ -1,24 +1,24 @@
 from pydantic import BaseModel
 from enum import Enum
 
+class ChatResponseTypes(Enum):
+    chart = "chart"
+    conversation = "conversation"
+
 class QueryRequest(BaseModel):
     query: str
     context: list = None  # To maintain the conversation context
+
+class QueryResponse(BaseModel):
+    response: str   
+    type: ChatResponseTypes
 
 class ChartQueryRequest(QueryRequest):
     table_name: str # Mandatory for chart generation
 
 
-class QueryResponse(BaseModel):
-    response: str
-    context: list
-
-class ChartResponseTypes(Enum):
-    conversation = "conversation"
-    chart = "chart"
-
 class ChartQueryResponse(BaseModel):
-    type: ChartResponseTypes
+    type: ChatResponseTypes
     response: str
 
 
