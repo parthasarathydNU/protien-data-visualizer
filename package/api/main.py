@@ -8,7 +8,7 @@ from database import database
 import logging
 from sqlalchemy import select, text
 from contextlib import asynccontextmanager
-from queryModel import QueryRequest, ChartQueryRequest, ChartQueryResponse, ChartResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT
+from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT
 from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -251,14 +251,14 @@ async def query_chart(query_request: ChartQueryRequest) -> ChartQueryResponse:
             # Invoke the LLMChain to get the response
             result = get_ai_response_for_chart_conversation(query_request.context,  query_request.table_name)
             return {
-                        "type": ChartResponseTypes.conversation,
+                        "type": ChatResponseTypes.conversation,
                         "response" : result
                     }
         else :
             result = generate_chart_spec(userQuery, query_request.context[:-1], query_request.table_name)
             # Else pass it to the query generation chain
             return {
-                        "type": ChartResponseTypes.chart,
+                        "type": ChatResponseTypes.chart,
                         "response" : result
                     }
 
