@@ -17,8 +17,9 @@ class Table(BaseModel):
 
 # Model for response related to chart generation queryrs
 class ChartGenerateLLMResponse(BaseModel):
+    """Structure for the LLM to output for chart spec generation queries"""
     aiResponse: str = Field(description="A conversational commentarty for the requested query")
-    spec = Field(description="The JSON Vega Spec for the requested chart")
+    spec: str = Field(description="The stringified JSON Vega Spec for the requested chart")
     explannation: str = Field(description="Explannation and reasoning for the above defined spec")
 
 # Model for followup queries 

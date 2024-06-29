@@ -36,6 +36,18 @@ def get_tables(tables: TableList) -> List[str]:
     table_names = [table.name for table in tables.list]  # Access the 'list' attribute directly
     return table_names
 
+def get_spec_and_explannation(response: ChartGenerateLLMResponse) -> dict:
+    """
+    Extracts the required keys and values from the llm response
+
+    Args: 
+    response (ChartGenerateLLMResponse) : An instance of ChartGenerateLLMResponse containing the containing the AiResponse, Chart Specification and Explannation
+    """
+
+    print(f"Returned data : {response}")
+
+    return response.spec
+
 # Tools
 # https://python.langchain.com/v0.1/docs/integrations/toolkits/sql_database
 agent_executor = create_sql_agent(getLLM(), db=db, agent_type="openai-tools", verbose=True)
@@ -97,7 +109,7 @@ generate_response_with_table_info = (
 
 
 
-_chart_spec_gen_chain = CHART_SPEC_GENERATION_PROMPT | getLLM(model="gpt-4o").with_structured_output(ChartGenerateLLMResponse)
+_chart_spec_gen_chain = CHART_SPEC_GENERATION_PROMPT | getLLM(model="gpt-4o").with_structured_output(ChartGenerateLLMResponse) | get_spec_and_explannation
 
 # Steps
 # Get the table metadata from the db instance
