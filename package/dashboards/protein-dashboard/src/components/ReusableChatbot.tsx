@@ -7,6 +7,8 @@ import LoadingSpinner from "./LoadingSpinner";
 import AiResponseSkeleton from "./AiResponseSkeleton";
 import { Fade } from "react-awesome-reveal";
 import {
+  AIChatBotRequestTypes,
+  AIChatBotResponseTypes,
   AIRequestPayload,
   FollowUpQuestionsResponse,
   Message,
@@ -18,7 +20,9 @@ import VegaChart from "./dynamicCharts/VegaChart";
 interface ReusableChatbotProps {
   initialMessage: string;
   followUpQuestionsInitial: string[];
-  getAIResponse: (payload: AIRequestPayload) => Promise<any>;
+  getAIResponse: (
+    payload: AIChatBotRequestTypes
+  ) => Promise<AIChatBotResponseTypes>;
   getFollowUpQuestions: (
     payload: AIRequestPayload
   ) => Promise<FollowUpQuestionsResponse>;
@@ -34,7 +38,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { role: MessageRolesEnum.assistant, content: initialMessage },
+    { role: MessageRolesEnum.assistant, content: initialMessage, type: MessageContentTypeEnum.conversation },
   ]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
     followUpQuestionsInitial
@@ -58,7 +62,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     const userQuery = queryString || currentQuery;
     const newMessages = [
       ...messages,
-      { role: MessageRolesEnum.human, content: userQuery },
+      { role: MessageRolesEnum.human, content: userQuery, type: MessageContentTypeEnum.conversation },
     ];
     setMessages(newMessages);
 
@@ -113,7 +117,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
                 msg.content
               ) : msg.type == MessageContentTypeEnum.chart ? (
                 <div className="flex justify-center">
-                  <VegaChart data={chartData} spec={msg.content} />
+                  <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
                 </div>
               ) : (
                 <Markdown
