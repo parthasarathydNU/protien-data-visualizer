@@ -194,7 +194,7 @@ async def query_followup(query_request: QueryRequest):
 
 
 @app.post("/query/")
-async def query_model(query_request: QueryRequest):
+async def query_model(query_request: QueryRequest) -> QueryResponse:
 
     print(f"\nData coming in to query : {query_request}")
 
@@ -211,11 +211,11 @@ async def query_model(query_request: QueryRequest):
         if classification == "conversation":
             # Invoke the LLMChain to get the response
             result = get_ai_response_for_conversation(query_request.context)
-            return {"response": result}
+            return {"response": result, "type" : ChatResponseTypes.conversation}
         else :
             result = query_database(userQuery, query_request.context[:-1])
             # Else pass it to the query generation chain
-            return {"response": result}
+            return {"response": result, "type" : ChatResponseTypes.conversation}
 
     except Exception as e:
         print(e)
