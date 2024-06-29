@@ -201,7 +201,7 @@ async def query_model(query_request: QueryRequest):
     try:
         
         # Check if given input is query or a conversation
-        classification = classify_input_string(userQuery)
+        classification = classify_input_string_for_conversation(userQuery)
         print(f"\nThe user input is classified as {classification}")
 
         # If it is a normal question, then just pass it along to the conversation chain

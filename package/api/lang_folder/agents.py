@@ -2,7 +2,7 @@ from lang_folder.database import db
 from lang_folder.few_shot_examples import few_shot_examples
 from lang_folder.chains import classification_chain, conversation_chain, generate_response_with_table_info, follow_up_questions_chain
 # Function to classify a given input string
-def classify_input_string(input_string):
+def classify_input_string_for_conversation(input_string):
     # Prepare the input for the LLMChain
     input_data = {"input_string": input_string}
     print(f"Data to classification chain {input_data}")
