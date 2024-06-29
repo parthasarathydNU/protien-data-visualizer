@@ -1,50 +1,19 @@
-import { MessageContentTypeEnum } from "api";
+import {
+  AIChartQueryRequest,
+  AIChatBotRequestTypes,
+  getAIChartResponse,
+  MessageContentTypeEnum,
+} from "api";
 import ReusableChatBot from "components/ReusableChatbot";
-import React, { useEffect, useState } from "react";
-
-const chartAPI = {
-  getDataSources: async () => {
-    // Simulated fetching of data sources
-    return ["DataSource1", "DataSource2", "DataSource3"];
-  },
-  createChartFromQuery: async (dataSource: any, query: string) => {
-    // Simulated chart creation logic
-    return {
-      type: MessageContentTypeEnum.chart,
-      spec: {
-        $schema: "https://vega.github.io/schema/vega-lite/v5.json",
-        description: "A simple bar chart with embedded data.",
-        mark: "bar",
-        encoding: {
-          x: { field: "a", type: "nominal", axis: { labelAngle: 0 } },
-          y: { field: "b", type: "quantitative" },
-        },
-      },
-    };
-  },
-};
 
 function ChartGeneratorChat() {
-  const [dataSources, setDataSources] = useState<string[]>([]);
-
-  useEffect(() => {
-    const fetchDataSources = async () => {
-      const sources = await chartAPI.getDataSources();
-      setDataSources(sources);
+  const getAIChartRes = async (payload: AIChatBotRequestTypes) => {
+    const AiChartPayload: AIChartQueryRequest = {
+      ...payload,
+      table_name: "codon_usage",
     };
-    fetchDataSources();
-  }, []);
 
-  const getAIResponse = async (payload: { query: string }) => {
-    const dataSource = dataSources[0]; // Simplified for example
-    const chartSpec = await chartAPI.createChartFromQuery(
-      dataSource,
-      payload.query
-    );
-    return {
-      response: chartSpec.spec,
-      type: chartSpec.type,
-    };
+    return await getAIChartResponse(AiChartPayload);
   };
 
   return (
@@ -54,17 +23,42 @@ function ChartGeneratorChat() {
         followUpQuestionsInitial={[
           "What charts can I create with this data source",
         ]}
-        getAIResponse={getAIResponse}
+        getAIResponse={getAIChartRes}
         getFollowUpQuestions={() =>
           Promise.resolve({ follow_up_questions: [] })
         }
-        chartData={{
-          values: [
-            { a: "A", b: 20 },
-            { a: "B", b: 34 },
-            { a: "C", b: 55 },
-          ],
-        }}
+        chartData={ [
+            {
+              codon: "UAA",
+              aa: "*",
+              freq: 0.91,
+              abundance: 0.69,
+            },
+            {
+              codon: "AUG",
+              aa: "M",
+              freq: 1,
+              abundance: 0.8,
+            },
+            {
+              codon: "UUU",
+              aa: "F",
+              freq: 0.45,
+              abundance: 0.3,
+            },
+            {
+              codon: "GGC",
+              aa: "G",
+              freq: 0.67,
+              abundance: 0.5,
+            },
+            {
+              codon: "CGA",
+              aa: "R",
+              freq: 0.23,
+              abundance: 0.15,
+            },
+          ]}
       />
     </div>
   );
