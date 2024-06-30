@@ -4,7 +4,7 @@ from lang_folder.llm import getLLM
 from lang_folder.database import db
 from lang_folder.chains import getGenerateQueryChain, getExecuteQueryChain, generate_query_and_execute_chain, parsed_query_output_chain, table_info_dynamic_few_shot_system_prompt_chain, table_chain
 from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION
-from lang_folder.agents import classify_input_string
+from lang_folder.agents import classify_input_string_for_conversation
 print("Hello")
 
 # print(db.get_usable_table_names())
@@ -20,7 +20,7 @@ llm = getLLM(model="gpt-3.5-turbo")
 # 1. Find if user input can be related to a query or a normal conversation
 user_query = "What is the average hydrophobicity of UPI00000001D7"
 print(user_query)
-classification_result = classify_input_string(user_query)
+classification_result = classify_input_string_for_conversation(user_query)
 print(f"The input string is classified as: {classification_result}")
 
 # Selecting a table based on user query

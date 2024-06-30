@@ -6,13 +6,31 @@ import "./Chatbot.css";
 import LoadingSpinner from "./LoadingSpinner";
 import AiResponseSkeleton from "./AiResponseSkeleton";
 import { Fade } from "react-awesome-reveal";
-import { AIRequestPayload, FollowUpQuestionsResponse, Message, MessageRolesEnum } from "../api";
+import {
+  AIChatBotRequestTypes,
+  AIChatBotResponseTypes,
+  AIRequestPayload,
+  FollowUpQuestionsResponse,
+  Message,
+  MessageContentTypeEnum,
+  MessageRolesEnum,
+} from "../api";
+import VegaChart from "./dynamicCharts/VegaChart";
+import { Button } from "@/components/ui/button";
+import { ChartsData } from "./dynamicCharts/types";
 
 interface ReusableChatbotProps {
   initialMessage: string;
   followUpQuestionsInitial: string[];
-  getAIResponse: (payload: AIRequestPayload) => Promise<any>;
-  getFollowUpQuestions: (payload: AIRequestPayload) => Promise<FollowUpQuestionsResponse>;
+  getAIResponse: (
+    payload: AIChatBotRequestTypes
+  ) => Promise<AIChatBotResponseTypes>;
+  getFollowUpQuestions: (
+    payload: AIRequestPayload
+  ) => Promise<FollowUpQuestionsResponse>;
+  chartData?: any;
+  followUpQuestionsCount?: number;
+  saveChart?: (chartData: ChartsData) => void
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -20,10 +38,13 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   followUpQuestionsInitial,
   getAIResponse,
   getFollowUpQuestions,
+  chartData,
+  followUpQuestionsCount = 3,
+  saveChart
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { role: MessageRolesEnum.assistant, content: initialMessage },
+    { role: MessageRolesEnum.assistant, content: initialMessage, type: MessageContentTypeEnum.conversation },
   ]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
     followUpQuestionsInitial
@@ -47,7 +68,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     const userQuery = queryString || currentQuery;
     const newMessages = [
       ...messages,
-      { role: MessageRolesEnum.human, content: userQuery },
+      { role: MessageRolesEnum.human, content: userQuery, type: MessageContentTypeEnum.conversation },
     ];
     setMessages(newMessages);
 
@@ -57,7 +78,11 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     });
     setMessages([
       ...newMessages,
-      { role: MessageRolesEnum.assistant, content: response.response },
+      {
+        role: MessageRolesEnum.assistant,
+        content: response.response,
+        type: response.type,
+      },
     ]);
     setLoading(false);
     askForFollowUp();
@@ -69,7 +94,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
       context: messages,
     });
     if (follow_up_questions) {
-      setFollowUpQuestions(follow_up_questions);
+      setFollowUpQuestions(follow_up_questions.slice(0, followUpQuestionsCount));
     }
   };
 
@@ -96,6 +121,14 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
             >
               {msg.role == MessageRolesEnum.human ? (
                 msg.content
+              ) : msg.type == MessageContentTypeEnum.chart ? (
+                <div className="flex justify-center flex-col">
+                  <div onClick={saveChart ? () => saveChart({chartData: chartData, chartSpec : JSON.parse(msg.content)}) : () => {}} className="flex">
+                    <Button variant={"outline"}>Save Chart</Button>
+                  </div>
+                  <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
+                  
+                </div>
               ) : (
                 <Markdown
                   remarkPlugins={[remarkGfm]}

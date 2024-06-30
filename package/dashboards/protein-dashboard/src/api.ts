@@ -1,23 +1,52 @@
 import { apiRequest } from "./utils/apiUtils";
 export enum MessageRolesEnum {
   assistant,
-human,
+  human,
 }
-export type Message = { role: MessageRolesEnum; content: string };
+export enum MessageContentTypeEnum {
+  chart="chart",
+  conversation="conversation",
+}
+
+export type Message = {
+  role: MessageRolesEnum;
+  content: string;
+  type: MessageContentTypeEnum;
+};
+
 export type AIRequestPayload = {
   query: string;
   context: Message[];
 };
 
-export type FollowUpQuestionsResponse = {
-  follow_up_questions: string[]
+export type AIResponsePayload = {
+  type: MessageContentTypeEnum,
+  response: string;
 }
 
-export const getAIResponse = async (payload: AIRequestPayload) => {
+export type FollowUpQuestionsResponse = {
+  follow_up_questions: string[];
+};
+
+export type AIChartQueryRequest = AIRequestPayload & { table_name: string };
+
+export type AIChatBotRequestTypes = AIRequestPayload | AIChartQueryRequest;
+
+export type AIChatBotResponseTypes = AIResponsePayload;
+
+export const getAIChartResponse = async (
+  payload: AIChartQueryRequest
+): Promise<AIResponsePayload> => {
+  return apiRequest<any>({ method: "post", url: "query_chart", payload });
+};
+
+export const getAIResponse = async (payload: AIRequestPayload): Promise<AIResponsePayload> => {
   return apiRequest<any>({ method: "post", url: "query/", payload });
 };
 
-export const getFollowUpQuestions = async (payload: AIRequestPayload) : Promise<FollowUpQuestionsResponse> => {
+export const getFollowUpQuestions = async (
+  payload: AIRequestPayload
+): Promise<FollowUpQuestionsResponse> => {
   return apiRequest<any>({ method: "post", url: "query_followup/", payload });
 };
 

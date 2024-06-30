@@ -12,21 +12,23 @@ import SQLChatBotView from "./components/SQLChatBotView";
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<ProteinsList />} />
-          <Route path="/chatbot" element={<SQLChatBotView />} />
-          <Route path="/explore" element={<Visualize />} />
-          <Route path="add-protein" element={<AddProtein />} />
+    <div className="flex basis-full">
+      <Router>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<ProteinsList />} />
+            <Route path="/chatbot" element={<SQLChatBotView />} />
+            <Route path="/explore" element={<Visualize />} />
+            <Route path="add-protein" element={<AddProtein />} />
 
-          <Route path="edit-protein" element={<EditProtein />} />
-          <Route path="/service-down" element={<ServiceDown />} />
-          <Route path="/visualization" element={<DataVisualization />} />
-          <Route path="/proteins/:entry" element={<ProteinDetail />} />
-        </Route>
-      </Routes>
-    </Router>
+            <Route path="edit-protein" element={<EditProtein />} />
+            <Route path="/service-down" element={<ServiceDown />} />
+            <Route path="/visualization" element={<DataVisualization />} />
+            <Route path="/proteins/:entry" element={<ProteinDetail />} />
+          </Route>
+        </Routes>
+      </Router>
+    </div>
   );
 };
 
