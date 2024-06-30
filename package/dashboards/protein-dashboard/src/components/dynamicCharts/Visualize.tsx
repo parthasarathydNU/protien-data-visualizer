@@ -5,21 +5,15 @@ import { Fade } from "react-awesome-reveal";
 import ChartControls from "./ChartControls";
 import { useState } from "react";
 import AddNewChart from "./AddNewChart";
+import { ChartsData } from "./types";
 
 function Visualize() {
-  /**
-   * chartsData: [
-   *  {
-   *    chartData: JSON,
-   *    chartSpec: JSON
-   *  }
-   * ]
-   */
-  const [chartsData, setChartsData] = useState([]);
 
-  const [selectedChartIndex, setSelectedChartIndex] = useState(-1);
+  const [chartsData, setChartsData] = useState<ChartsData[]>([]);
 
-  const updateChartSpec = (newSpec) => {
+  const [selectedChartIndex, setSelectedChartIndex] = useState<number>(-1);
+
+  const updateChartSpec = (newSpec: any) => {
     if (selectedChartIndex < 0 || selectedChartIndex >= chartsData.length) {
       console.error("Invalid chart index");
       return;
@@ -36,6 +30,12 @@ function Visualize() {
     setChartsData(newChartsData);
   };
 
+  const saveChart = (chartInfo: ChartsData) : void => {
+    // Append this to the list of charts we have in this view
+    const updatedCharts = [...chartsData, chartInfo];
+    setChartsData(updatedCharts);
+  }
+
   return (
     <div className="visualize-page">
       <Fade>
@@ -49,7 +49,7 @@ function Visualize() {
             {/* <button className="new-chart bg-blue-600">
               New Chart
             </button> */}
-            <AddNewChart />
+            <AddNewChart saveChart={saveChart} />
           </div>
         </header>
       </Fade>
@@ -57,7 +57,7 @@ function Visualize() {
         <Fade delay={500} duration={300}>
           <section className="grid-wrapper">
             <div className="charts-panel">
-              {chartsData.map((index, { chartData, chartSpec }) => (
+              {chartsData.map(({ chartData, chartSpec },index) => (
                 <DynamicResizableBox
                   key={index}
                   width={300}
@@ -77,7 +77,7 @@ function Visualize() {
               <div className="chartControls">
                 {chartsData[selectedChartIndex] ? (
                   <ChartControls
-                    onSpecChange={(newSpec) => {
+                    onSpecChange={(newSpec:any) => {
                       updateChartSpec(newSpec);
                     }}
                     spec={chartsData[selectedChartIndex]}

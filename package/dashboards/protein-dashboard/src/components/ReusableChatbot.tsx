@@ -16,6 +16,8 @@ import {
   MessageRolesEnum,
 } from "../api";
 import VegaChart from "./dynamicCharts/VegaChart";
+import { Button } from "@/components/ui/button";
+import { ChartsData } from "./dynamicCharts/types";
 
 interface ReusableChatbotProps {
   initialMessage: string;
@@ -28,6 +30,7 @@ interface ReusableChatbotProps {
   ) => Promise<FollowUpQuestionsResponse>;
   chartData?: any;
   followUpQuestionsCount?: number;
+  saveChart?: (chartData: ChartsData) => void
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -36,7 +39,8 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   getAIResponse,
   getFollowUpQuestions,
   chartData,
-  followUpQuestionsCount = 3
+  followUpQuestionsCount = 3,
+  saveChart
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -118,8 +122,12 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
               {msg.role == MessageRolesEnum.human ? (
                 msg.content
               ) : msg.type == MessageContentTypeEnum.chart ? (
-                <div className="flex justify-center">
+                <div className="flex justify-center flex-col">
+                  <div onClick={saveChart ? () => saveChart({chartData: chartData, chartSpec : JSON.parse(msg.content)}) : () => {}} className="flex">
+                    <Button variant={"outline"}>Save Chart</Button>
+                  </div>
                   <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
+                  
                 </div>
               ) : (
                 <Markdown

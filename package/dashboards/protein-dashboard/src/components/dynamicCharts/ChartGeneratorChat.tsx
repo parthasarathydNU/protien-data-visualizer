@@ -2,11 +2,15 @@ import {
   AIChartQueryRequest,
   AIChatBotRequestTypes,
   getAIChartResponse,
-  MessageContentTypeEnum,
 } from "api";
 import ReusableChatBot from "components/ReusableChatbot";
+import { ChartsData } from "./types";
 
-function ChartGeneratorChat() {
+interface ChartGeneratorProps {
+  saveChart: (chartsData: ChartsData) => void
+}
+
+const ChartGeneratorChat : React.FC<ChartGeneratorProps> = ({saveChart}) =>  {
   const getAIChartRes = async (payload: AIChatBotRequestTypes) => {
     const AiChartPayload: AIChartQueryRequest = {
       ...payload,
@@ -21,12 +25,13 @@ function ChartGeneratorChat() {
       <ReusableChatBot
         initialMessage="Welcome to the Chart Generator! Ask me to create a chart."
         followUpQuestionsInitial={[
-          "What charts can I create with this data source",
+          "What are the data sources available ?",
         ]}
         getAIResponse={getAIChartRes}
         getFollowUpQuestions={() =>
           Promise.resolve({ follow_up_questions: [] })
         }
+        saveChart={saveChart}
         chartData={ [
             {
               codon: "UAA",

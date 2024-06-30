@@ -1,32 +1,35 @@
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 import { Button } from "@/components/ui/button";
 import ChartGeneratorChat from "./ChartGeneratorChat";
+import { ChartsData } from "./types";
 
-function AddNewChart() {
+interface AddNewChartProps {
+  saveChart : (chartData: ChartsData) => void
+}
+
+const AddNewChart : React.FC<AddNewChartProps> = ({saveChart}) => {
   return (
-    <Sheet>
-      <SheetTrigger>
+    <Dialog>
+      <DialogTrigger>
         <Button>New Chart</Button>
-      </SheetTrigger>
-      <SheetContent >
-        <SheetHeader>
-          <SheetTitle>Create Chart</SheetTitle>
-          <SheetDescription>
-            
-              <ChartGeneratorChat />
-
-          </SheetDescription>
-        </SheetHeader>
-      </SheetContent>
-    </Sheet>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create Chart</DialogTitle>
+          <DialogDescription>
+            <ChartGeneratorChat saveChart={saveChart} />
+          </DialogDescription>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
   );
 }
 
