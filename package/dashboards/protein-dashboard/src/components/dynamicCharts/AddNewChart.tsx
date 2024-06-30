@@ -21,7 +21,7 @@ const AddNewChart : React.FC<AddNewChartProps> = ({saveChart}) => {
       <DialogTrigger>
         <Button>New Chart</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className=" max-w-[50vw] min-w-[500px]">
         <DialogHeader>
           <DialogTitle>Create Chart</DialogTitle>
           <DialogDescription>
