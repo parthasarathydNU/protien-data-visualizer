@@ -24,9 +24,7 @@ const ChartGeneratorChat : React.FC<ChartGeneratorProps> = ({saveChart}) =>  {
     <div>
       <ReusableChatBot
         initialMessage="Welcome to the Chart Generator! Ask me to create a chart."
-        followUpQuestionsInitial={[
-          "What are the data sources available ?",
-        ]}
+        followUpQuestionsInitial={[]}
         getAIResponse={getAIChartRes}
         getFollowUpQuestions={() =>
           Promise.resolve({ follow_up_questions: [] })
