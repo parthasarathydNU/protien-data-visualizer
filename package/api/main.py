@@ -1,19 +1,18 @@
-import os
 import json
 from dotenv import load_dotenv
 from typing import List
 from models import protein_data
 from fastapi import FastAPI, HTTPException
 from protein import ProteinBase
-from database import database, engine
+from database import database
 import logging
 from sqlalchemy import select, text
 from contextlib import asynccontextmanager
-from queryModel import QueryRequest, CHAT_GPT_SYSTEM_PROMPT, CHAT_GPT_FOLLOWUP_PROMPT
-from util_functions import remove_control_characters, process_protein_data
+from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT
+from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from lang_folder.agents import classify_input_string, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai
+from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -37,7 +36,7 @@ app = FastAPI(lifespan=lifespan)
 
 
 # Define allowed origins
-origins = ["*"]
+origins = ["*", "http://localhost:3000"]
 
 # Add CORS middleware
 app.add_middleware(
@@ -130,6 +129,10 @@ async def list_proteins(skip: int = 0, limit: int = 10):
         response.append(result_dict)
     return response
 
+@app.get("/data_sources", response_model=List[str])
+async def data_sources():
+    return get_table_names()
+
 @app.put("/proteins/{entry}")
 async def update_protein(entry: str, protein: ProteinBase):
     # Step 1: Perform the update
@@ -191,33 +194,75 @@ async def query_followup(query_request: QueryRequest):
 
 
 @app.post("/query/")
-async def query_model(query_request: QueryRequest):
+async def query_model(query_request: QueryRequest) -> QueryResponse:
 
     print(f"\nData coming in to query : {query_request}")
 
     # Pick the last conversation from the user
-    length = len(query_request.context)
-    lastEntry = query_request.context[length-1]
-    userQuery = lastEntry['content']
+    userQuery = query_request.query
 
     try:
         
         # Check if given input is query or a conversation
-        classification = classify_input_string(userQuery)
+        classification = classify_input_string_for_conversation(userQuery)
         print(f"\nThe user input is classified as {classification}")
 
         # If it is a normal question, then just pass it along to the conversation chain
         if classification == "conversation":
             # Invoke the LLMChain to get the response
             result = get_ai_response_for_conversation(query_request.context)
-            return {"response": result}
+            return {"response": result, "type" : ChatResponseTypes.conversation}
         else :
             result = query_database(userQuery, query_request.context[:-1])
             # Else pass it to the query generation chain
-            return {"response": result}
+            return {"response": result, "type" : ChatResponseTypes.conversation}
 
     except Exception as e:
         print(e)
         # raise HTTPException(status_code=500, detail=str(e))
-        return {"response": "Error in forming output"}
+        return {"response": "Error in forming output "+ e}
     
+
+@app.post("/query_chart")
+async def query_chart(query_request: ChartQueryRequest) -> ChartQueryResponse:
+    """
+    This api takes in a data source name, the conversation history, the current user query
+    and returns a json spec for the chart based on context
+
+    This first iteration we build a simple API that is stateless 
+    We will use the conversation history for context instead of storing context on the API side
+
+    This api will return data of type ChartQueryResponse
+    
+    The focus is on getting the spec given the user query, conversation history and table name
+    """
+    print(f"Input body for generating chart {query_request}")
+
+    # Pick the last conversation from the user
+    userQuery = query_request.query
+
+    try:
+        # Check if given input is to generate a spec or a conversation
+        classification = classify_input_string_for_chart(userQuery)
+        print(f"\nThe user input is classified as {classification}")
+
+        # If it is a normal question, then just pass it along to the conversation chain
+        if classification == "conversation":
+            # Invoke the LLMChain to get the response
+            result = get_ai_response_for_chart_conversation(query_request.context,  query_request.table_name)
+            return {
+                        "type": ChatResponseTypes.conversation,
+                        "response" : result
+                    }
+        else :
+            result = generate_chart_spec(userQuery, query_request.context[:-1], query_request.table_name)
+            # Else pass it to the query generation chain
+            return {
+                        "type": ChatResponseTypes.chart,
+                        "response" : result
+                    }
+
+    except Exception as e:
+        print(e)
+        # raise HTTPException(status_code=500, detail=str(e))
+        return {"response": "Error in forming output "+ e}

@@ -1,5 +1,4 @@
-from lang_folder.database import db
-from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY_TEMPLATE, SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE, SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION, TABLE_DETAILS_PROMPT_TEMPLATE
+from lang_folder.templates import INPUT_CLASSIFICATION_PROMPT_TEMPLATE, FORMAT_ANSWER_FROM_QUERY_TEMPLATE, SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE, SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE, SYSTEM_PROMPT_FOR_FOLLOW_UP_QUESTION_GENERATION, TABLE_DETAILS_PROMPT_TEMPLATE, CHART_CLASSIFICATION_PROMPT_TEMPLATE, SYSTEM_PROMPT_FOR_CHART_GENERATION_TEMPLATE, SYSTEM_PROMPT_FOR_CHART_CONVERSATION_TEMPLATE
 from lang_folder.vectorStore import vectorstore
 from langchain_openai import OpenAIEmbeddings
 from lang_folder.few_shot_examples import few_shot_examples
@@ -8,6 +7,10 @@ from langchain_core.example_selectors import SemanticSimilarityExampleSelector
 
 INPUT_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
     INPUT_CLASSIFICATION_PROMPT_TEMPLATE
+)
+
+CHART_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
+    CHART_CLASSIFICATION_PROMPT_TEMPLATE
 )
 
 ANSWER_USER_QUESTION_PROMPT = PromptTemplate.from_template(
@@ -19,6 +22,22 @@ TABLE_DETAILS_PROMPT  = PromptTemplate.from_template(
 )
 
 
+# Prompt to generate chart schema based on table information and current conversation
+CHART_SPEC_GENERATION_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_PROMPT_FOR_CHART_GENERATION_TEMPLATE),
+    ("placeholder", "{conversation}"),
+    ("human", "{question}\n\nSPEC: "),
+])
+
+# Conversations about generating charts
+GENERATE_CHART_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([
+    ("system", SYSTEM_PROMPT_FOR_CHART_CONVERSATION_TEMPLATE),
+    # Means the template will receive an optional list of messages under
+    # the "conversation" key
+    ("placeholder", "{conversation}")
+    # Equivalently:
+    # MessagesPlaceholder(variable_name="conversation", optional=True)
+])
 
 # Normal Conversation with user
 GENERATE_CONVERSATION_PROMPT = ChatPromptTemplate.from_messages([

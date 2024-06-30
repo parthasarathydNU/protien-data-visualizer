@@ -1,10 +1,26 @@
 from typing import List
 from langchain_core.pydantic_v1 import BaseModel, Field
 
+class QueryRequest(BaseModel):
+    query: str
+    context: list = None  # To maintain the conversation context
+
 # Define the Table model
 class Table(BaseModel):
     """Table in SQL database."""
     name: str = Field(description="Name of table in SQL database.")
+
+# Model for response related to chart generation queryrs
+class ChartGenerateLLMResponse(BaseModel):
+    """Structure for the LLM to output for chart spec generation queries"""
+    aiResponse: str = Field(description="A conversational commentarty for the requested query")
+    spec: str = Field(description="The stringified JSON Vega Spec for the requested chart")
+    explannation: str = Field(description="Explannation and reasoning for the above defined spec")
+
+# Model for followup queries 
+class FollowUpQueries(BaseModel):
+    """List of questions that the user can ask as a follow up to the bot"""
+    follow_up_questions : List[str] = Field(description="List of questions that the user can ask as a follow up to the bot")
 
 # Define the TableList model
 class TableList(BaseModel):

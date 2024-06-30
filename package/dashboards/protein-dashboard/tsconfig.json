@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
+    "baseUrl": "src",  // This tells TypeScript to use src as the base directory for everything
+    "paths": {
+      "@/*": ["@/*"]  // Maps "@" to "src/@"
+    },
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,7 +20,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
