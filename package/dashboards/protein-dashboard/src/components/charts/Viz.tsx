@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { fetchProteins } from '../../api';
+import { fetchProteins } from '../../api/api';
 import { Chart, registerables } from 'chart.js';
 
 // Register all components
@@ -27,32 +27,30 @@ interface ChartConfig {
 const DataVisualization: React.FC = () => {
   const [chartData, setChartData] = useState<ChartConfig | null>(null);
 
-  const getData = async (): Promise<Protein[]> => {
-    const response = await fetchProteins();
-    return response || [];
-  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const data = await getData();
+  const {data} = fetchProteins();
 
-      const labels = data.map((protein: Protein) => protein.entry);
-      const lengths = data.map((protein: Protein) => protein.length);
+  if(!data || data.length == 0){
+    return <>"No Data to Show"</>
+  }
 
-      setChartData({
-        labels: labels,
-        datasets: [
-          {
-            label: 'Protein Length',
-            data: lengths,
-            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-          },
-        ],
-      });
-    };
+  const labels = data.map((protein: Protein) => protein.entry);
+  const lengths = data.map((protein: Protein) => protein.length);
 
-    fetchData();
-  }, []);
+  setChartData({
+    labels: labels,
+    datasets: [
+      {
+        label: 'Protein Length',
+        data: lengths,
+        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+      },
+    ],
+  });
+
+
+
+
 
   return (
     <div className=' h-[70vh] overflow-auto'>

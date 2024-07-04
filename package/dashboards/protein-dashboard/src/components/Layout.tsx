@@ -15,7 +15,7 @@ const Layout: React.FC = () => {
           </div>
         </nav>
       </header>
-      <main className="flex-grow container mx-auto p-4">
+      <main className="flex-grow container mx-auto p-4 h-[80vh]">
         <Outlet />
       </main>
       <footer className="bg-gray-800 text-white py-4">

@@ -3,8 +3,8 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import "./Chatbot.css";
-import LoadingSpinner from "./LoadingSpinner";
-import AiResponseSkeleton from "./AiResponseSkeleton";
+import LoadingSpinner from "../LoadingSpinner";
+import AiResponseSkeleton from "../AiResponseSkeleton";
 import { Fade } from "react-awesome-reveal";
 import {
   AIChatBotRequestTypes,
@@ -14,10 +14,10 @@ import {
   Message,
   MessageContentTypeEnum,
   MessageRolesEnum,
-} from "../api";
-import VegaChart from "./dynamicCharts/VegaChart";
+} from "../../api/types";
+import VegaChart from "../dynamicCharts/VegaChart";
 import { Button } from "@/components/ui/button";
-import { ChartsData } from "./dynamicCharts/types";
+import { ChartsData } from "../dynamicCharts/types";
 
 interface ReusableChatbotProps {
   initialMessage: string;

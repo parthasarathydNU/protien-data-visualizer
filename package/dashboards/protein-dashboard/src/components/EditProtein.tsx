@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { fetchProtein, updateProtein } from "../api";
+import { fetchProtein, updateProtein } from "../api/api";
 
 const EditProtein: React.FC = () => {
   const location = useLocation();
@@ -9,15 +9,15 @@ const EditProtein: React.FC = () => {
   const entry = queryParams.get("entry") || "";
   const [protein, setProtein] = useState({
     entry: "",
-    length: "",
-    first_seen: "",
-    last_seen: "",
+    length: 0,
+    first_seen: new Date(),
+    last_seen: new Date(),
     sequence: "",
     pfam: "",
     smart: "",
-    amino_acid_composition: "",
-    avg_hydrophobicity: "",
-    secondary_structure: "",
+    amino_acid_composition: {},
+    avg_hydrophobicity: 0.0,
+    secondary_structure: {},
   });
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const EditProtein: React.FC = () => {
           type="date"
           name="first_seen"
           placeholder="First Seen"
-          value={protein.first_seen}
+          value={protein.first_seen.toDateString()}
           onChange={handleChange}
         />
         <input
@@ -77,7 +77,7 @@ const EditProtein: React.FC = () => {
           type="date"
           name="last_seen"
           placeholder="Last Seen"
-          value={protein.last_seen}
+          value={protein.last_seen.toDateString()}
           onChange={handleChange}
         />
         <input
@@ -126,7 +126,7 @@ const EditProtein: React.FC = () => {
           type="text"
           name="secondary_structure"
           placeholder="Secondary Structure"
-          value={protein.secondary_structure}
+          value={JSON.stringify(protein.secondary_structure)}
           onChange={handleChange}
         />
         <button

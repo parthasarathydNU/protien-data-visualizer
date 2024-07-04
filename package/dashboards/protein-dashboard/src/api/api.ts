@@ -1,38 +1,12 @@
-import { apiRequest } from "./utils/apiUtils";
-export enum MessageRolesEnum {
-  assistant,
-  human,
-}
-export enum MessageContentTypeEnum {
-  chart="chart",
-  conversation="conversation",
-}
-
-export type Message = {
-  role: MessageRolesEnum;
-  content: string;
-  type: MessageContentTypeEnum;
-};
-
-export type AIRequestPayload = {
-  query: string;
-  context: Message[];
-};
-
-export type AIResponsePayload = {
-  type: MessageContentTypeEnum,
-  response: string;
-}
-
-export type FollowUpQuestionsResponse = {
-  follow_up_questions: string[];
-};
-
-export type AIChartQueryRequest = AIRequestPayload & { table_name: string };
-
-export type AIChatBotRequestTypes = AIRequestPayload | AIChartQueryRequest;
-
-export type AIChatBotResponseTypes = AIResponsePayload;
+import { apiRequest } from "../utils/apiUtils";
+import { ProteinData } from "./apiDataTypes";
+import { GetUseQuery } from "./hooks";
+import {
+  AIChartQueryRequest,
+  AIResponsePayload,
+  AIRequestPayload,
+  FollowUpQuestionsResponse,
+} from "./types";
 
 export const getAIChartResponse = async (
   payload: AIChartQueryRequest
@@ -40,7 +14,9 @@ export const getAIChartResponse = async (
   return apiRequest<any>({ method: "post", url: "query_chart", payload });
 };
 
-export const getAIResponse = async (payload: AIRequestPayload): Promise<AIResponsePayload> => {
+export const getAIResponse = async (
+  payload: AIRequestPayload
+): Promise<AIResponsePayload> => {
   return apiRequest<any>({ method: "post", url: "query/", payload });
 };
 
@@ -50,15 +26,25 @@ export const getFollowUpQuestions = async (
   return apiRequest<any>({ method: "post", url: "query_followup/", payload });
 };
 
-export const fetchProteins = async () => {
-  return apiRequest<any[]>({ method: "get", url: "proteins/" });
+export const fetchProteins = () => {
+  return GetUseQuery(
+    ["proteins"],
+    apiRequest<any[]>({ method: "get", url: "protein_data" })
+  );
+};
+
+export const fetchSamples = (tableName: string) => {
+  return GetUseQuery(
+    [tableName],
+    apiRequest<any[]>({ method: "get", url: `get_sample/${tableName}` })
+  );
 };
 
 export const fetchProteinCalculations = async (entry: string) => {
   return apiRequest<any>({ method: "get", url: `get_protein_data/${entry}` });
 };
 
-export const fetchProtein = async (entry: string) => {
+export const fetchProtein = async (entry: string): Promise<ProteinData> => {
   return apiRequest<any>({ method: "get", url: `proteins/${entry}` });
 };
 
