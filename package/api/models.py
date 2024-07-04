@@ -1,4 +1,4 @@
-from sqlalchemy import Table, Column, Integer, String, Float, Date, JSON
+from sqlalchemy import Table, Column, Integer, String, Float, Date, JSON, Text
 from sqlalchemy.sql.sqltypes import Float
 from database import metadata
 
@@ -25,4 +25,49 @@ codon_usage = Table(
     Column("aa", String),
     Column("freq", Float),
     Column("abundance", Float),
+)
+
+gene_aliases = Table(
+    "gene_aliases", metadata,
+    Column("gene_id", String, primary_key=True),
+    Column("alias1", String),
+    Column("alias2", String),
+    Column("alias3", String),
+    Column("alias4", String),
+    Column("alias5", String),
+    Column("alias6", String),
+    Column("alias7", String),
+    Column("alias8", String),
+    Column("alias9", String),
+)
+
+gene_annotations = Table(
+    "gene_annotations", metadata,
+    Column("source", String(50)),
+    Column("gene_id", String(255), primary_key=True),
+    Column("symbol", String(255)),
+    Column("go_id", String(50)),
+    Column("reference", String(255)),
+    Column("evidence", String(50)),
+    Column("aspect", String(10)),
+    Column("description", Text),
+    Column("synonym", String(255)),
+    Column("gene_type", String(100)),
+    Column("taxon", String(50)),
+    Column("date", String(20)),
+    Column("assigned_by", String(100)),
+)
+
+
+gff_annotations = Table(
+    "gff_annotations", metadata,
+    Column("seqid", String(255)),
+    Column("source", String(255)),
+    Column("type", String(255)),
+    Column("start", Integer),
+    Column("stop", Integer),
+    Column("score", String(10)),
+    Column("strand", String(1)),
+    Column("phase", String(1)),
+    Column("attributes", Text),
 )

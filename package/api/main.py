@@ -1,7 +1,7 @@
 import json
 from dotenv import load_dotenv
 from typing import List
-from models import protein_data, codon_usage
+from models import protein_data, codon_usage, gene_aliases, gene_annotations, gff_annotations
 from fastapi import FastAPI, HTTPException
 from data_models.protein import ProteinBase
 from data_models.codon_usage import CodonUsage
@@ -110,44 +110,34 @@ async def create_protein(protein: ProteinBase):
         logging.error(f"Error creating protein: {e}")
         raise HTTPException(status_code=400, detail="Error creating protein")
 
-@app.get("/protein_data/", response_model=List[ProteinBase])
-async def list_proteins(skip: int = 0, limit: int = 10):
-    query = select(
-        protein_data.c.entry,
-        protein_data.c.length,
-        protein_data.c.first_seen,
-        protein_data.c.last_seen,
-        protein_data.c.sequence,
-        protein_data.c.pfam,
-        protein_data.c.smart,
-        protein_data.c.avg_hydrophobicity,
-    ).offset(skip).limit(limit)
+@app.get("/get_sample/{entry}")
+async def getSample(entry: str, skip: int = 0, limit: int = 10):
+    source = None
+
+    if entry == "protein_data":
+        source = protein_data
+
+    if entry == "codon_usage":
+        source = codon_usage
+
+    if entry == "gene_aliases":
+        source = gene_aliases
+
+    if entry == "gene_annotations":
+        source = gene_annotations
+    
+    if entry == "gff_annotations":
+        source = gff_annotations
+
+    query = select(source).offset(skip).limit(limit)
     results = await database.fetch_all(query)
     response = []
     
     for result in results:
         result_dict = dict(result)
         response.append(result_dict)
-    return response
-
-@app.get("/codon_usage/", response_model=List[CodonUsage])
-async def list_codons(skip: int = 0, limit: int = 10):
-    query = select(
-        codon_usage.c.codon,
-        codon_usage.c.aa,
-        codon_usage.c.freq,
-        codon_usage.c.abundance,
-        
-    ).offset(skip).limit(limit)
-    results = await database.fetch_all(query)
-    response = []
+    return response   
     
-    for result in results:
-        result_dict = dict(result)
-        response.append(result_dict)
-    return response
-
-
 
 @app.get("/data_sources", response_model=List[str])
 async def data_sources():
