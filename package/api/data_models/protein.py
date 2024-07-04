@@ -19,3 +19,15 @@ class ProteinBase(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ProteinMetaData(BaseModel):
+    entry: str
+    length: Optional[int] = None
+    first_seen: Optional[date] = None
+    last_seen: Optional[date] = None
+    pfam: Optional[str] = None
+    smart: Optional[str] = None
+    avg_hydrophobicity: Optional[float] = None
+
+    class Config:
+        from_attributes = True        

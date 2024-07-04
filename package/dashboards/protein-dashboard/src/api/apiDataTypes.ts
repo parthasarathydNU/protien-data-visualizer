@@ -14,6 +14,8 @@ export type ProteinData = {
     secondary_structure: [string]
 }
 
+export type ProteinDataKey = keyof ProteinData;
+
 export type CodonUsage = {
     codon: string
     aa: string

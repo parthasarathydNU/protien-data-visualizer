@@ -19,13 +19,9 @@ export const getFollowUpQuestions = async (
   return apiRequest<any>({ method: "post", url: "query_followup/", payload });
 };
 
-export const fetchProteins = async () : Promise<ProteinData[] | undefined> => {
-  return apiRequest<any[]>({ method: "get", url: "get_sample/protein_data" });
+export const fetchProteins = async () => {
+  return apiRequest<any[]>({ method: "get", url: "protein_data" });
 };
-
-export const fetchCodonUsage = async () : Promise<CodonUsage[] | undefined> => {
-  return apiRequest<any[]>({method: "get", url: "get_sample/codon_usage" });
-}
 
 export const fetchSamples = async (tableName: string) => {
   return apiRequest<any[]>({method: "get", url: `get_sample/${tableName}` });

@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ProteinsList from "./ProteinsList";
+import ProteinDataTable from "./tables/ProteinDataTable";
 import ReusableTableView from "./tables/ReusableTableView";
 
 function TablesView() {
@@ -13,7 +13,7 @@ function TablesView() {
         <TabsTrigger value="gffAnnotations">GFF Annotations</TabsTrigger>
       </TabsList>
       <TabsContent value="proteinData">
-        <ProteinsList />
+        <ProteinDataTable />
       </TabsContent>
       <TabsContent value="codonUsage">
         <ReusableTableView dataSourceName="codon_usage" />
