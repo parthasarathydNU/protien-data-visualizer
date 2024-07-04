@@ -6,15 +6,12 @@ interface ReusableTableViewProps {
     dataSourceName: string
 }
 const ReusableTableView: React.FC<ReusableTableViewProps> = ({dataSourceName}) => {
-    const [data, setData] = useState<any[]>([]);
+  
+    const {data, isLoading, error} =  fetchSamples(dataSourceName);
 
-    useEffect(() => {
-      const getData = async () => {
-        const data = await fetchSamples(dataSourceName);
-        setData(data || []);
-      };
-      getData();
-    }, []);
+    if(!data){
+      return <>"No Data to display"</>
+    }
     
     return <ReusableTable caption="" data={data} />;
 }

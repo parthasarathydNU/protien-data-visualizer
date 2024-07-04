@@ -1,5 +1,6 @@
 import { apiRequest } from "../utils/apiUtils";
-import { CodonUsage, ProteinData } from "./apiDataTypes";
+import { ProteinData } from "./apiDataTypes";
+import { getUseQuery } from "./hooks";
 import { AIChartQueryRequest, AIResponsePayload, AIRequestPayload, FollowUpQuestionsResponse } from "./types";
 
 
@@ -19,12 +20,12 @@ export const getFollowUpQuestions = async (
   return apiRequest<any>({ method: "post", url: "query_followup/", payload });
 };
 
-export const fetchProteins = async () => {
-  return apiRequest<any[]>({ method: "get", url: "protein_data" });
+export const fetchProteins = () => {
+  return getUseQuery(["proteins"], apiRequest<any[]>({ method: "get", url: "protein_data" }));
 };
 
-export const fetchSamples = async (tableName: string) => {
-  return apiRequest<any[]>({method: "get", url: `get_sample/${tableName}` });
+export const fetchSamples = (tableName: string) => {
+  return getUseQuery([tableName], apiRequest<any[]>({method: "get", url: `get_sample/${tableName}` }));
 }
 
 export const fetchProteinCalculations = async (entry: string) => {

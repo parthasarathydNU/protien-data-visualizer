@@ -1,5 +1,4 @@
 import { fetchProteins } from "api/api";
-import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,18 +12,19 @@ import { ProteinData } from "api/apiDataTypes";
 import { Link } from "react-router-dom";
 
 function ProteinDataTable() {
-  const [proteins, setProteins] = useState<any[] | undefined>([]);
+  
+  const {data : proteins, isLoading, error} = fetchProteins();
 
-  useEffect(() => {
-    const getProteins = async () => {
-      let data = await fetchProteins();
-      setProteins(data);
-    };
-    getProteins();
-  }, []);
+  if (isLoading) {
+    return <>"Loading data"</>;
+  }
 
-  if (!proteins || proteins.length == 0) {
-    return <>"No Data to Render !"</>;
+  if( error ) {
+    return <>{`Error in Loading data ${error}`}</>;
+  }
+
+  if(proteins?.length == 0 || !proteins) {
+    return <>"No Data to Show"</>;
   }
 
   const columnNames = Object.keys(proteins[0]);
