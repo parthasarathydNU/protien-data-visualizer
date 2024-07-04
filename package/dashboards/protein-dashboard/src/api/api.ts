@@ -1,8 +1,12 @@
 import { apiRequest } from "../utils/apiUtils";
 import { ProteinData } from "./apiDataTypes";
-import { getUseQuery } from "./hooks";
-import { AIChartQueryRequest, AIResponsePayload, AIRequestPayload, FollowUpQuestionsResponse } from "./types";
-
+import { GetUseQuery } from "./hooks";
+import {
+  AIChartQueryRequest,
+  AIResponsePayload,
+  AIRequestPayload,
+  FollowUpQuestionsResponse,
+} from "./types";
 
 export const getAIChartResponse = async (
   payload: AIChartQueryRequest
@@ -10,7 +14,9 @@ export const getAIChartResponse = async (
   return apiRequest<any>({ method: "post", url: "query_chart", payload });
 };
 
-export const getAIResponse = async (payload: AIRequestPayload): Promise<AIResponsePayload> => {
+export const getAIResponse = async (
+  payload: AIRequestPayload
+): Promise<AIResponsePayload> => {
   return apiRequest<any>({ method: "post", url: "query/", payload });
 };
 
@@ -21,18 +27,24 @@ export const getFollowUpQuestions = async (
 };
 
 export const fetchProteins = () => {
-  return getUseQuery(["proteins"], apiRequest<any[]>({ method: "get", url: "protein_data" }));
+  return GetUseQuery(
+    ["proteins"],
+    apiRequest<any[]>({ method: "get", url: "protein_data" })
+  );
 };
 
 export const fetchSamples = (tableName: string) => {
-  return getUseQuery([tableName], apiRequest<any[]>({method: "get", url: `get_sample/${tableName}` }));
-}
+  return GetUseQuery(
+    [tableName],
+    apiRequest<any[]>({ method: "get", url: `get_sample/${tableName}` })
+  );
+};
 
 export const fetchProteinCalculations = async (entry: string) => {
   return apiRequest<any>({ method: "get", url: `get_protein_data/${entry}` });
 };
 
-export const fetchProtein = async (entry: string) : Promise<ProteinData> => {
+export const fetchProtein = async (entry: string): Promise<ProteinData> => {
   return apiRequest<any>({ method: "get", url: `proteins/${entry}` });
 };
 

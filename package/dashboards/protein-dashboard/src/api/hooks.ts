@@ -13,14 +13,16 @@
  */
 import { useQuery } from "@tanstack/react-query";
 
-export const getUseQuery = (queryKey: string[], queryFn: Promise<any[] | undefined>) => {
-    return useQuery({
-      queryKey,
-      queryFn: () => queryFn,
-      staleTime: Infinity, // Data never goes stale automatically
-      refetchOnWindowFocus: false, // Do not refetch on window focus
-      refetchOnReconnect: false, // Do not refetch on reconnect
-      refetchOnMount: false, // Do not refetch on mount
-    });
-  };
-  
+export const GetUseQuery = (
+  queryKey: string[],
+  queryFn: Promise<any[] | undefined>
+) => {
+  return useQuery({
+    queryKey,
+    queryFn: () => queryFn,
+    staleTime: Infinity, // Data never goes stale automatically
+    refetchOnWindowFocus: false, // Do not refetch on window focus
+    refetchOnReconnect: false, // Do not refetch on reconnect
+    refetchOnMount: false, // Do not refetch on mount
+  });
+};
