@@ -1,3 +1,5 @@
+[![Build and Push GenoQuery-API Image](https://github.com/parthasarathydNU/protien-data-visualizer/actions/workflows/build-push-genoquery-api.yml/badge.svg)](https://github.com/parthasarathydNU/protien-data-visualizer/actions/workflows/build-push-genoquery-api.yml)
+
 # [Protein Dashboard](https://protein-dashboard-unlock-8dyrz39.gamma.site/)
 
 This project is a comprehensive web application designed to interact with a protein database. It includes functionalities for creating, reading, updating, and deleting protein data, as well as advanced features like an AI chatbot for SQL query generation and visualizations using Three.js.
