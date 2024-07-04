@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
-import { fetchProteins } from '../../api';
+import { fetchProteins } from '../../api/api';
 import { Chart, registerables } from 'chart.js';
 
 // Register all components

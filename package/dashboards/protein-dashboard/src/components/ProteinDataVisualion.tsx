@@ -4,7 +4,7 @@ import SecondaryStructureChart from "./charts/SecondaryStructureChart";
 import HydrophobicityGauge from "./charts/HydrophobicityGaugeChart";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-import { fetchProteinCalculations } from "../api";
+import { fetchProteinCalculations } from "../api/api";
 
 interface ProteinData {
   length: number;

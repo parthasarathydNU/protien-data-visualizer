@@ -1,9 +1,8 @@
 import {
-  AIChartQueryRequest,
-  AIChatBotRequestTypes,
   getAIChartResponse,
-} from "api";
-import ReusableChatBot from "components/ReusableChatbot";
+} from "api/api";
+import { AIChartQueryRequest, AIChatBotRequestTypes } from "api/types";
+import ReusableChatBot from "components/reusableComponents/ReusableChatbot";
 import { ChartsData } from "./types";
 
 interface ChartGeneratorProps {

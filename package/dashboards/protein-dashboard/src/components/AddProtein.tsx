@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createProtein } from '../api';
+import { createProtein } from '../api/api';
 
 const AddProtein: React.FC = () => {
   const [protein, setProtein] = useState({

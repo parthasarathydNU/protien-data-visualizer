@@ -9,6 +9,7 @@ import ProteinDetail from "./components/ProteinDetail";
 import ServiceDown from "./components/ServiceDown";
 import Visualize from "./components/dynamicCharts/Visualize";
 import SQLChatBotView from "./components/SQLChatBotView";
+import TablesView from "components/TablesView";
 
 const App: React.FC = () => {
   return (
@@ -16,7 +17,7 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<Layout />}>
-            <Route index element={<ProteinsList />} />
+            <Route index element={<TablesView />} />
             <Route path="/chatbot" element={<SQLChatBotView />} />
             <Route path="/explore" element={<Visualize />} />
             <Route path="add-protein" element={<AddProtein />} />

@@ -1,20 +1,11 @@
+import { ProteinData } from "api/apiDataTypes";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchProteins, deleteProtein } from "../api";
+import { fetchProteins } from "../api/api";
 
-interface Protein {
-  entry: string;
-  length: number;
-  first_seen: string;
-  last_seen: string;
-  sequence: string;
-  pfam: string;
-  smart: string;
-  avg_hydrophobicity: number;
-}
 
 const ProteinsList: React.FC = () => {
-  const [proteins, setProteins] = useState<Protein[]>([]);
+  const [proteins, setProteins] = useState<ProteinData[]>([]);
 
   useEffect(() => {
     const getProteins = async () => {
@@ -28,7 +19,6 @@ const ProteinsList: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Proteins List</h1>
       <table className="min-w-full bg-white">
         <thead>
           <tr>
@@ -39,7 +29,7 @@ const ProteinsList: React.FC = () => {
             <th className="py-2">Pfam</th>
             <th className="py-2">SMART</th>
             <th className="py-2">Avg. Hydrophobicity</th>
-            <th className="py-2">Actions</th>
+            {/* <th className="py-2">Actions</th> */}
           </tr>
         </thead>
         <tbody>
@@ -51,20 +41,12 @@ const ProteinsList: React.FC = () => {
               >
                 <td className="border px-4 py-2">{protein.entry}</td>
               </Link>
-              <td className="border px-4 py-2">{protein.length}</td>
-              <td className="border px-4 py-2">{protein.first_seen}</td>
-              <td className="border px-4 py-2">{protein.last_seen}</td>
+              <td className="border px-4 py-2">{protein.length.toString()}</td>
+              <td className="border px-4 py-2">{protein.first_seen.toString()}</td>
+              <td className="border px-4 py-2">{protein.last_seen.toString()}</td>
               <td className="border px-4 py-2">{protein.pfam}</td>
               <td className="border px-4 py-2">{protein.smart}</td>
-              <td className="border px-4 py-2">{protein.avg_hydrophobicity}</td>
-              <td className="border px-4 py-2">
-                <Link
-                  to={`/edit-protein?entry=${protein.entry}`}
-                  className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded mr-2"
-                >
-                  Edit
-                </Link>
-              </td>
+              <td className="border px-4 py-2">{protein.avg_hydrophobicity.toString()}</td>
             </tr>
           ))}
         </tbody>

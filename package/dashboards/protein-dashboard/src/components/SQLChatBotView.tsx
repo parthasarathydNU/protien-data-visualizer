@@ -1,6 +1,6 @@
 import React from 'react';
-import { getAIResponse, getFollowUpQuestions } from '../api';
-import ReusableChatBot from './ReusableChatbot'; // Ensure this import path matches the location of your Chatbot component
+import { getAIResponse, getFollowUpQuestions } from '../api/api';
+import ReusableChatBot from './reusableComponents/ReusableChatbot'; // Ensure this import path matches the location of your Chatbot component
 
 const SQLChatBotView: React.FC = () => {
   return (

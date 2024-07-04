@@ -1,30 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchProtein } from "../api";
+import { fetchProtein } from "../api/api";
 import Protein3DViewer, { secondaryStructures } from "./Protein3DViewer";
 import ProteinCard from "./ProteinCard";
 import ProteinVisualization from "./ProteinDataVisualion";
 import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "react-tabs/style/react-tabs.css";
-
-export interface Protein {
-  entry: string;
-  length: number;
-  first_seen: string;
-  last_seen: string;
-  organism_id: string;
-  protein_names: string;
-  sequence: string;
-  pfam: string;
-  smart: string;
-  amino_acid_composition: Record<string, number>;
-  avg_hydrophobicity: number;
-  secondary_structure: string[];
-}
+import { ProteinData } from "api/apiDataTypes";
 
 const ProteinDetail: React.FC = () => {
   const { entry } = useParams<{ entry: string }>();
-  const [protein, setProtein] = useState<Protein | null>(null);
+  const [protein, setProtein] = useState<ProteinData>();
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {

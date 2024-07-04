@@ -18,3 +18,11 @@ protein_data = Table(
     Column("avg_hydrophobicity", Float),
     Column("secondary_structure", JSON),
 )
+
+codon_usage = Table(
+    "codon_usage", metadata,
+    Column("codon", String, primary_key=True),
+    Column("aa", String),
+    Column("freq", Float),
+    Column("abundance", Float),
+)
