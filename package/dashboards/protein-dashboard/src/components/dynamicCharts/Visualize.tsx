@@ -2,11 +2,12 @@ import VegaChart from "./VegaChart";
 import DynamicResizableBox from "./DynamicResizableBox";
 import "./styles/Visualize.css";
 import { Fade } from "react-awesome-reveal";
-import ChartControls from "./ChartControls";
 import { useEffect, useState } from "react";
 import AddNewChart from "./AddNewChart";
 import { ChartsData } from "./types";
-import { fetchCharts, fetchSamples, saveChart } from "api/api";
+import { fetchCharts, saveChart } from "api/api";
+
+import ChartControlSheet from "./ChartControlSheet";
 
 function Visualize() {
   const [selectedChartIndex, setSelectedChartIndex] = useState<number>(-1);
@@ -37,14 +38,14 @@ function Visualize() {
       return;
     }
 
-    const updatedChartData = {
+    const updatedChartData: ChartsData = {
       ...chartsData[selectedChartIndex], // Spread to create a shallow copy
-      chartSpec: newSpec, // Directly update the chartSpec
+      chart_spec: newSpec, // Directly update the chartSpec
     };
 
     const newChartsData = [...chartsData];
     newChartsData[selectedChartIndex] = updatedChartData;
-
+    
     setChartsData(newChartsData);
   };
 
@@ -89,10 +90,15 @@ function Visualize() {
                     maxConstraints={[800, 600]}
                   >
                     <div
-                      className="chartDiv"
+                      className="chartDiv relative"
                       onClick={() => setSelectedChartIndex(index)}
                     >
                       <VegaChart data={chart_data} spec={chart_spec} />
+                      <ChartControlSheet 
+                      selectedChartIndex={selectedChartIndex} 
+                      chart_spec={chart_spec}
+                      updateChartSpec={updateChartSpec}
+                       />
                     </div>
                   </DynamicResizableBox>
                 ))}
@@ -102,7 +108,7 @@ function Visualize() {
                   </div>
                 )}
               </div>
-              {chartsData.length > 0 && (
+              {/* {chartsData.length > 0 && (
                 <div className="chartControls">
                   {chartsData[selectedChartIndex] ? (
                     <ChartControls
@@ -115,7 +121,7 @@ function Visualize() {
                     "Select a chart to see controls"
                   )}
                 </div>
-              )}
+              )} */}
             </section>
           </Fade>
         ) : (
