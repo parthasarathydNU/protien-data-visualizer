@@ -1,11 +1,12 @@
 from typing import List
 from operator import itemgetter
 from lang_folder.llm import getLLM
-from langchain.chains import create_sql_query_chain
+from langchain.chains import create_sql_query_chain, RetrievalQA
 from lang_folder.models import TableList, FollowUpQueries, ChartGenerateLLMResponse
 from lang_folder.database import db
 from lang_folder.prompts import INPUT_CLASSIFICATION_PROMPT, ANSWER_USER_QUESTION_PROMPT, GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION, GENERATE_CONVERSATION_PROMPT, GENERATE_FOLLOW_UP_CONVERSATION_PROMPT, TABLE_DETAILS_PROMPT, CHART_CLASSIFICATION_PROMPT, CHART_SPEC_GENERATION_PROMPT, GENERATE_CHART_CONVERSATION_PROMPT
 from langchain_core.runnables import RunnablePassthrough
+from lang_folder.pinecone import vectorstore
 from langchain_core.output_parsers import StrOutputParser
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_community.tools.sql_database.tool import QuerySQLDataBaseTool # Tool for querying a SQL database.
@@ -116,3 +117,11 @@ _chart_spec_gen_chain = CHART_SPEC_GENERATION_PROMPT | getLLM(model="gpt-4o").wi
 # for the given table
 # pass that along with the user query and conversation history to generate the spec
 generate_chart_spec_with_table_info = ( RunnablePassthrough.assign(table_info=agent_executor)  | _chart_spec_gen_chain )
+
+
+# Testing Retrieval chain from langchain
+qa = RetrievalQA.from_chain_type(  
+    llm=getLLM(model="gpt-4o"),  
+    chain_type="stuff",  
+    retriever=vectorstore.as_retriever()  
+)  

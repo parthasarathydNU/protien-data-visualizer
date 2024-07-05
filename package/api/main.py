@@ -12,9 +12,8 @@ from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQuery
 from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation
+from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation, test_retrieval_agent, insert_examples_agent
 from fastapi.middleware.cors import CORSMiddleware
-
 
 
 logging.basicConfig(level=logging.INFO)
@@ -315,3 +314,26 @@ async def create_chart(chart: CreateChartRequest):
     except Exception as e:
         logging.error(f"Error creating chart: {e}")
         raise HTTPException(status_code=400, detail="Error creating chart")
+
+
+# TEST API For Upserting data to vector store
+# ====================================================================
+@app.post("/test_retrieval")
+async def test_retrieval(string: str):
+    try:
+        print(string)
+        retrievedData = test_retrieval_agent(string)
+        return retrievedData
+    except Exception as e:
+        logging.error(f"Error retrieving data: {e}")
+        raise HTTPException(status_code=400, detail="Error retrieving data")
+
+# TEST API For Retrieving Similar Results
+# ====================================================================
+@app.post("/insert_data")
+async def insert_data_to_pinecone():
+    try:
+        insert_examples_agent()
+    except Exception as e:
+        logging.error(f"Error inserting data: {e}")
+        raise HTTPException(status_code=400, detail="Error inserting data")

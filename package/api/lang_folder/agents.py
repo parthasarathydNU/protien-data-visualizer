@@ -1,6 +1,8 @@
+from lang_folder.chains import classification_chain, conversation_chain, generate_response_with_table_info, follow_up_questions_chain, chart_classification_chain, generate_chart_spec_with_table_info, chart_conversation_chain, qa
 from lang_folder.database import db
+from lang_folder.pinecone import embeddings, vectorstore, index
 from lang_folder.few_shot_examples import few_shot_examples
-from lang_folder.chains import classification_chain, conversation_chain, generate_response_with_table_info, follow_up_questions_chain, chart_classification_chain, generate_chart_spec_with_table_info, chart_conversation_chain
+
 # Function to classify a given input string
 def classify_input_string_for_conversation(input_string):
     # Prepare the input for the LLMChain
@@ -61,6 +63,25 @@ def generate_chart_spec(userQuery:str, conversation:any, tableName: str):
 def get_table_names() -> list[str]:
     return db.get_usable_table_names()
 
+def test_retrieval_agent(string: str) -> str:
+    return qa.invoke(string)
+
+def insert_examples_agent():
+    # Iterate over examples to process and upload data
+    for idx, example in enumerate(few_shot_examples):
+        input_text = example["input"]
+        # Generate embeddings
+        vector = embeddings.embed_query(input_text)
+        # Prepare the data for insertion
+        data = {
+            "id": str(idx),
+            "values": vector,
+            "metadata": {
+                "input": input_text,
+                "query": example["query"]
+            }
+        }
+        index.upsert(vectors=[data])
 
 _table_descriptions = """
 Table Name : codon_usage
