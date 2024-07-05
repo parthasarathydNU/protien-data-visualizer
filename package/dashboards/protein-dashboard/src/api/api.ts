@@ -1,3 +1,4 @@
+import { ChartsData } from "components/dynamicCharts/types";
 import { apiRequest } from "../utils/apiUtils";
 import { ProteinData } from "./apiDataTypes";
 import { GetUseQuery } from "./hooks";
@@ -47,6 +48,18 @@ export const fetchProteinCalculations = async (entry: string) => {
 export const fetchProtein = async (entry: string): Promise<ProteinData> => {
   return apiRequest<any>({ method: "get", url: `proteins/${entry}` });
 };
+
+export const saveChart = async ({ chart_data, chart_spec }: ChartsData) => {
+  const payload = {
+    chart_data: JSON.stringify(chart_data),
+    chart_spec: JSON.stringify(chart_spec),
+  };
+  return apiRequest<any>({ method: "post", url: `create_chart`, payload });
+};
+
+export const fetchCharts =  () => {
+  return apiRequest<any[]>({ method: "get", url: `get_sample/${"charts"}` })
+}
 
 export const createProtein = async (protein: any) => {
   return apiRequest<any>({

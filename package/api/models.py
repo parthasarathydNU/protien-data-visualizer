@@ -1,5 +1,6 @@
-from sqlalchemy import Table, Column, Integer, String, Float, Date, JSON, Text
+from sqlalchemy import Table, Column, Integer, String, Float, Date, JSON, Text, text
 from sqlalchemy.sql.sqltypes import Float
+from sqlalchemy.dialects.postgresql import UUID
 from database import metadata
 
 protein_data = Table(
@@ -70,4 +71,11 @@ gff_annotations = Table(
     Column("strand", String(1)),
     Column("phase", String(1)),
     Column("attributes", Text),
+)
+
+charts = Table(
+    "charts", metadata,
+    Column("chart_id", UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()")),
+    Column("chart_data", JSON),
+    Column("chart_spec", JSON),
 )

@@ -1,4 +1,4 @@
 export type ChartsData = {
-    chartData: any,
-    chartSpec: any
+    chart_data: JSON,
+    chart_spec: JSON
   }

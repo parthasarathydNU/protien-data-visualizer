@@ -123,7 +123,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
                 msg.content
               ) : msg.type == MessageContentTypeEnum.chart ? (
                 <div className="flex justify-center flex-col">
-                  <div onClick={saveChart ? () => saveChart({chartData: chartData, chartSpec : JSON.parse(msg.content)}) : () => {}} className="flex">
+                  <div onClick={saveChart ? () => saveChart({chart_data: chartData, chart_spec : JSON.parse(msg.content)}) : () => {}} className="flex">
                     <Button variant={"outline"}>Save Chart</Button>
                   </div>
                   <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
