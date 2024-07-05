@@ -22,6 +22,7 @@ export const apiRequest = async <T>({ method, url, payload }: RequestConfig): Pr
     const response = await axios.request<T>(options);
     return response.data;
   } catch (error: any) {
-    window.location.href = '/service-down';
+    // window.location.href = '/service-down';
+    console.log(error);
   }
 };

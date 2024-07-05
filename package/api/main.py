@@ -1,14 +1,14 @@
 import json
 from dotenv import load_dotenv
 from typing import List
-from models import protein_data, codon_usage, gene_aliases, gene_annotations, gff_annotations
+from models import protein_data, codon_usage, gene_aliases, gene_annotations, gff_annotations, charts
 from fastapi import FastAPI, HTTPException
 from data_models.protein import ProteinBase, ProteinMetaData
 from database import database
 import logging
 from sqlalchemy import select
 from contextlib import asynccontextmanager
-from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT
+from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
 from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -61,6 +61,8 @@ async def options_handler(rest_of_path: str):
 async def read_root():
     return {"message": "Hello World"}
 
+# APIS FOR LANDING PAGE
+# ====================================================================
 @app.get("/proteins/{entry}", response_model=ProteinBase)
 async def read_protein(entry: str):
     query = protein_data.select().where(protein_data.c.entry == entry)
@@ -147,6 +149,9 @@ async def getSample(entry: str, skip: int = 0, limit: int = 10):
     if entry == "gff_annotations":
         source = gff_annotations
 
+    if entry == "charts":
+        source = charts
+
     query = select(source).offset(skip).limit(limit)
     results = await database.fetch_all(query)
     response = []
@@ -200,8 +205,8 @@ async def delete_protein(entry: str):
     await database.execute(query)
     return {"message": "Protein deleted successfully"}
 
-
-
+# APIS FOR CHATBOTS
+# ====================================================================
 @app.post("/query_followup/")
 async def query_followup(query_request: QueryRequest):
     messages = [CHAT_GPT_FOLLOWUP_PROMPT] + query_request.context + [{"role": "user", "content": query_request.query}]
@@ -294,3 +299,19 @@ async def query_chart(query_request: ChartQueryRequest) -> ChartQueryResponse:
         print(e)
         # raise HTTPException(status_code=500, detail=str(e))
         return {"response": "Error in forming output "+ e}
+
+
+# APIS FOR CHARTS
+# ====================================================================
+@app.post("/create_chart")
+async def create_chart(chart: CreateChartRequest):
+    try:
+        query = charts.insert().values(
+            chart_data=jsonable_encoder(chart.chart_data),
+            chart_spec=jsonable_encoder(chart.chart_spec)
+        )
+        last_record_id = await database.execute(query)
+        return {"chart_data": chart.chart_data, "chart_spec": chart.chart_spec, "id": last_record_id}
+    except Exception as e:
+        logging.error(f"Error creating chart: {e}")
+        raise HTTPException(status_code=400, detail="Error creating chart")
