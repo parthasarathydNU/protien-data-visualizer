@@ -15,3 +15,6 @@ langchain_community
 langchain
 pymysql
 chromadb
+
+pinecone-client[grpc]==3.0.0
+langchain-pinecone==0.0.3 
