@@ -18,6 +18,7 @@ import {
 import VegaChart from "../dynamicCharts/VegaChart";
 import { Button } from "@/components/ui/button";
 import { ChartsData } from "../dynamicCharts/types";
+import PreviousConversationsSheet from "./PreviousConversationsSheet";
 
 interface ReusableChatbotProps {
   initialMessage: string;
@@ -30,7 +31,8 @@ interface ReusableChatbotProps {
   ) => Promise<FollowUpQuestionsResponse>;
   chartData?: any;
   followUpQuestionsCount?: number;
-  saveChart?: (chartData: ChartsData) => void
+  saveChart?: (chartData: ChartsData) => void;
+  pastConversations?: string[];
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -40,11 +42,16 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   getFollowUpQuestions,
   chartData,
   followUpQuestionsCount = 3,
-  saveChart
+  saveChart,
+  pastConversations = [],
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
-    { role: MessageRolesEnum.assistant, content: initialMessage, type: MessageContentTypeEnum.conversation },
+    {
+      role: MessageRolesEnum.assistant,
+      content: initialMessage,
+      type: MessageContentTypeEnum.conversation,
+    },
   ]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
     followUpQuestionsInitial
@@ -68,7 +75,11 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     const userQuery = queryString || currentQuery;
     const newMessages = [
       ...messages,
-      { role: MessageRolesEnum.human, content: userQuery, type: MessageContentTypeEnum.conversation },
+      {
+        role: MessageRolesEnum.human,
+        content: userQuery,
+        type: MessageContentTypeEnum.conversation,
+      },
     ];
     setMessages(newMessages);
 
@@ -94,7 +105,9 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
       context: messages,
     });
     if (follow_up_questions) {
-      setFollowUpQuestions(follow_up_questions.slice(0, followUpQuestionsCount));
+      setFollowUpQuestions(
+        follow_up_questions.slice(0, followUpQuestionsCount)
+      );
     }
   };
 
@@ -123,11 +136,21 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
                 msg.content
               ) : msg.type == MessageContentTypeEnum.chart ? (
                 <div className="flex justify-center flex-col">
-                  <div onClick={saveChart ? () => saveChart({chart_data: chartData, chart_spec : JSON.parse(msg.content)}) : () => {}} className="flex">
+                  <div
+                    onClick={
+                      saveChart
+                        ? () =>
+                            saveChart({
+                              chart_data: chartData,
+                              chart_spec: JSON.parse(msg.content),
+                            })
+                        : () => {}
+                    }
+                    className="flex"
+                  >
                     <Button variant={"outline"}>Save Chart</Button>
                   </div>
                   <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
-                  
                 </div>
               ) : (
                 <Markdown
@@ -179,6 +202,11 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
           </button>
         </div>
       </form>
+      <div className=" absolute left-0 top-[50%] ">
+        <PreviousConversationsSheet prevConverationData={[]} loadPrevConv={function (convId: string): void {
+          throw new Error("Function not implemented.");
+        } }  />
+      </div>
     </div>
   );
 };
