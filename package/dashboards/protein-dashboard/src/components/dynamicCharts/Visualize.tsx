@@ -94,11 +94,13 @@ function Visualize() {
                       onClick={() => setSelectedChartIndex(index)}
                     >
                       <VegaChart data={chart_data} spec={chart_spec} />
+                      <div title="Settings">
+
                       <ChartControlSheet 
-                      selectedChartIndex={selectedChartIndex} 
                       chart_spec={chart_spec}
                       updateChartSpec={updateChartSpec}
                        />
+                      </div>
                     </div>
                   </DynamicResizableBox>
                 ))}

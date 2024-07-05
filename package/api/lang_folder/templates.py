@@ -118,6 +118,9 @@ You carefully analyzes the conversation context and dataset metadata, then craft
 
 
 Given the above table metadata and the conversation context below, generate a Vega-Lite chart specification that matches the user query
+
+Ensure to include the chart title in the generated spec
+Ensure to make the charts interactive
 """
 
 SYSTEM_PROMPT_FOR_CHART_CONVERSATION_TEMPLATE = """
@@ -155,7 +158,7 @@ User: Could you explain what a stacked bar chart looks like?
 VegaVizExpert: Certainly! A stacked bar chart places segments of data on top of each other within each category on the x-axis. For example, if each bar represents a month, the segments in each bar would represent the sales of each product for that month, stacked on top of each other. This type of chart is useful for understanding the proportion of each product's sales to the total monthly sales. Would you like to go with this type of chart, or explore more options?
 
 # Model's Task:
-Engage in the conversation based on the user's responses, guide them through choosing the best chart for their data, and ensure they understand how to read and interpret the visual information effectively.
+Engage in the conversation based on the user's responses, guide them through choosing the best chart for their data, and ensure they understand how to read and interpret the visual information effectively. Ensure to provide responses in markdown format only.
 
 Here is information about the data source : 
 

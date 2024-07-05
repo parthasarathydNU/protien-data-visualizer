@@ -1,10 +1,10 @@
-import React from 'react';
-import "./styles/ChartControls.css"
+import React from "react";
+import "./styles/ChartControls.css";
 
 class ChartControls extends React.Component {
   handleInputChange = (propertyPath, value) => {
     const newSpec = { ...this.props.spec };
-    const pathSegments = propertyPath.split('.');
+    const pathSegments = propertyPath.split(".");
     let current = newSpec;
 
     pathSegments.forEach((segment, index) => {
@@ -28,7 +28,7 @@ class ChartControls extends React.Component {
         <input
           className="control-input"
           type="text"
-          value={value || ''}
+          value={value || ""}
           onChange={(e) => this.handleInputChange(propertyPath, e.target.value)}
         />
       </div>
@@ -41,7 +41,7 @@ class ChartControls extends React.Component {
 
     // Chart title
     if (spec.title) {
-      controls.push(this.renderControl('Title', 'title', spec.title));
+      controls.push(this.renderControl("Title", "title", spec.title));
     }
 
     // Mark type
@@ -52,7 +52,7 @@ class ChartControls extends React.Component {
           <select
             className="control-select"
             value={spec.mark}
-            onChange={(e) => this.handleInputChange('mark', e.target.value)}
+            onChange={(e) => this.handleInputChange("mark", e.target.value)}
           >
             <option value="bar">Bar</option>
             <option value="line">Line</option>
@@ -60,7 +60,15 @@ class ChartControls extends React.Component {
             <option value="area">Area</option>
             <option value="rect">Rect</option>
             <option value="boxplot">Boxplot</option>
-            {/* Add other mark types as needed */}
+            <option value="arc">Arc</option>
+            <option value="image">Image</option>
+            <option value="group">Group</option>
+            <option value="path">Path</option>
+            <option value="rule">Rule</option>
+            <option value="shape">Shape</option>
+            <option value="symbol">Symbol</option>
+            <option value="text">Text</option>
+            <option value="trail">Trail</option>
           </select>
         </div>
       );
@@ -91,11 +99,18 @@ class ChartControls extends React.Component {
         if (channelSpec.type) {
           controls.push(
             <div key={`encoding.${channel}.type`} className="control-group">
-              <label className="control-label">{`${channel.toUpperCase()} Type`}:</label>
+              <label className="control-label">
+                {`${channel.toUpperCase()} Type`}:
+              </label>
               <select
                 className="control-select"
                 value={channelSpec.type}
-                onChange={(e) => this.handleInputChange(`encoding.${channel}.type`, e.target.value)}
+                onChange={(e) =>
+                  this.handleInputChange(
+                    `encoding.${channel}.type`,
+                    e.target.value
+                  )
+                }
               >
                 <option value="nominal">Nominal</option>
                 <option value="ordinal">Ordinal</option>
@@ -117,8 +132,16 @@ class ChartControls extends React.Component {
           <input
             className="control-color"
             type="color"
-            value={spec.encoding.color.scale.range ? spec.encoding.color.scale.range[0] : '#000000'}
-            onChange={(e) => this.handleInputChange('encoding.color.scale.range', [e.target.value])}
+            value={
+              spec.encoding.color.scale.range
+                ? spec.encoding.color.scale.range[0]
+                : "#000000"
+            }
+            onChange={(e) =>
+              this.handleInputChange("encoding.color.scale.range", [
+                e.target.value,
+              ])
+            }
           />
         </div>
       );

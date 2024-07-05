@@ -1,36 +1,40 @@
 import React from "react";
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-  } from "@/components/ui/sheet";
-  import { IoIosSettings } from "react-icons/io";
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+
+import { IoIosSettings } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import ChartControls from "./ChartControls";
 
 interface ChartControlSheetProps {
-    selectedChartIndex: number
-    chart_spec: JSON
-    updateChartSpec: (spec:JSON) => void
+  chart_spec: JSON;
+  updateChartSpec: (spec: JSON) => void;
 }
 
-const ChartControlSheet: React.FC<ChartControlSheetProps> = ({selectedChartIndex, chart_spec, updateChartSpec}) => {
+const ChartControlSheet: React.FC<ChartControlSheetProps> = ({
+  chart_spec,
+  updateChartSpec,
+}) => {
   return (
     <Sheet>
       <SheetTrigger>
         {" "}
-        <Button variant={"link"} size="icon" className="absolute top-0 right-0">
+        <Button
+          variant={"link"}
+          size="icon"
+          className="absolute bottom-0 left-0"
+        >
           <IoIosSettings />
         </Button>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>
-            Change Chart Setting - Chart {selectedChartIndex + 1}
-          </SheetTitle>
           <SheetDescription>
             <ChartControls
               onSpecChange={(newSpec: any) => {
