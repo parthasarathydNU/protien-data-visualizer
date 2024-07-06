@@ -1,15 +1,21 @@
-import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
 
 const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col max-h-screen basis-full">
       <header className="bg-blue-600 text-white py-4">
-        <nav className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="hover:underline"><h1 className="text-xl font-bold">Protein Dashboard</h1></Link>
+        <nav className="container mx-auto flex justify-start gap-3 items-center sm:justify-between  ">
+          <Link to="/" className="hover:underline">
+            <h1 className="text-xl font-bold">Protein Dashboard</h1>
+          </Link>
           <div className="space-x-4">
-            <Link to="/explore" className="hover:underline">Explore Data</Link>
-          <Link to="/chatbot" className="hover:underline">SQL Chat Bot</Link>
+            <Link to="/explore" className="hover:underline">
+              Explore Data
+            </Link>
+            <Link to="/chatbot" className="hover:underline">
+              SQL Chat Bot
+            </Link>
             {/* <Link to="/visualization" className="hover:underline">Visualize</Link> */}
             {/* <Link to="/add-protein" className="hover:underline">Add Protein</Link> */}
           </div>
