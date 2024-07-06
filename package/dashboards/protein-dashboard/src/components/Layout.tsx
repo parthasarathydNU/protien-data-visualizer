@@ -1,20 +1,27 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { AreaChart } from "lucide-react";
+import { DatabaseZap } from 'lucide-react';
 
 const Layout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col max-h-screen basis-full">
       <header className="bg-blue-600 text-white py-4">
-        <nav className="container mx-auto flex justify-start gap-3 items-center sm:justify-between  ">
+        <nav className="container mx-auto flex justify-start gap-3 items-center md:justify-between  ">
           <Link to="/" className="hover:underline">
             <h1 className="text-xl font-bold">Protein Dashboard</h1>
           </Link>
-          <div className="space-x-4">
+          <div className="space-x-4 flex gap-2">
             <Link to="/explore" className="hover:underline">
-              Explore Data
+              <Button variant={"secondary"}>
+                <AreaChart /> Explore Data
+              </Button>
             </Link>
             <Link to="/chatbot" className="hover:underline">
-              SQL Chat Bot
+              <div className="flex items-center gap-2">
+                <Button variant={"secondary"}> <div className="flex gap-2 items-center"><DatabaseZap /> SQL Chat Bot </div></Button>
+              </div>
             </Link>
             {/* <Link to="/visualization" className="hover:underline">Visualize</Link> */}
             {/* <Link to="/add-protein" className="hover:underline">Add Protein</Link> */}
