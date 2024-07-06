@@ -7,6 +7,8 @@ import {
   AIResponsePayload,
   AIRequestPayload,
   FollowUpQuestionsResponse,
+  ConversationMetadata,
+  ConversationEntryData,
 } from "./types";
 
 export const getAIChartResponse = async (
@@ -40,6 +42,40 @@ export const fetchSamples = (tableName: string) => {
     apiRequest<any[]>({ method: "get", url: `get_sample/${tableName}` })
   );
 };
+
+// chart or conversation
+// returns type ConversationMetadata[]
+export const usePreviousConversationsMetadata = (type: string)  => {
+  let option =  type.substring(1);
+  if(option === "chatbot"){
+    option = "conversation";
+  } else {
+    option = "chart";
+  }
+  return GetUseQuery(
+    [`${type}-conversations`],
+    apiRequest<ConversationMetadata[]>({ method: "get", url: `get_conversations/${option}` }),
+    {
+      staleTime: 60000
+    }
+  );
+}
+
+export const getPreviousConversations = (type: string) => {
+
+  let option = type.substring(1);
+  if(type === "chatbot"){
+    option = "conversation";
+  } else {
+    option = "chart";
+  }
+  return apiRequest<ConversationMetadata[]>({ method: "get", url: `get_conversations/${option}` });
+
+}
+
+export const createConversationEntry = async (payload:ConversationEntryData) => {
+  return apiRequest<any>({ method: "post", url: `create_conversation`, payload })
+}
 
 export const fetchProteinCalculations = async (entry: string) => {
   return apiRequest<any>({ method: "get", url: `get_protein_data/${entry}` });

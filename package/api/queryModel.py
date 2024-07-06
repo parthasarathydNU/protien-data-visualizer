@@ -25,6 +25,8 @@ class CreateChartRequest(BaseModel):
     chart_data: str
     chart_spec: str
 
+
+
 # QUERY PROMPTS =====================================
 DB_SCHEMA = """
 The database has the following tables and columns:

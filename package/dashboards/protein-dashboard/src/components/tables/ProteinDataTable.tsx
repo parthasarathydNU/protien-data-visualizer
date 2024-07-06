@@ -33,8 +33,8 @@ function ProteinDataTable() {
     <Table>
       <TableHeader>
         <TableRow>
-          {columnNames.map((columnName) => (
-            <TableHead className=" font-bold capitalize">
+          {columnNames.map((columnName, index) => (
+            <TableHead key={index} className=" font-bold capitalize">
               {columnName}
             </TableHead>
           ))}

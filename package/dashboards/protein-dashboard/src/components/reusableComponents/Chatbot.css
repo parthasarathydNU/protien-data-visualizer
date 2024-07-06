@@ -1,5 +1,6 @@
 .chatbot {
     display: flex;
+    position: relative;
     flex-direction: column;
     height: 80vh;
     /* max-width: 600px; */

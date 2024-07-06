@@ -1,9 +1,10 @@
 import json
 from dotenv import load_dotenv
 from typing import List
-from models import protein_data, codon_usage, gene_aliases, gene_annotations, gff_annotations, charts
+from models import protein_data, codon_usage, gene_aliases, gene_annotations, gff_annotations, charts, conversationsMetadata
 from fastapi import FastAPI, HTTPException
 from data_models.protein import ProteinBase, ProteinMetaData
+from data_models.conversation import ConversationEntryData
 from database import database
 import logging
 from sqlalchemy import select
@@ -255,6 +256,55 @@ async def query_model(query_request: QueryRequest) -> QueryResponse:
         # raise HTTPException(status_code=500, detail=str(e))
         return {"response": "Error in forming output "+ e}
     
+
+# chart / conversation
+@app.get("/get_conversations/{type}")
+async def getSample(type: str):
+    try: 
+        if type != "chart" and type != "conversation":
+            raise HTTPException(status_code=400, detail="Invalid type. Type must be 'chart' or 'conversation'.")
+
+        query = conversationsMetadata.select().where(conversationsMetadata.c.type == type)
+        results = await database.fetch_all(query)
+        response = []
+        
+        for result in results:
+            result_dict = dict(result)
+            response.append(result_dict)
+        return response  
+    except Exception as e:
+        print(e)
+        # raise HTTPException(status_code=500, detail=str(e))
+        return {"response": "Error in fetching conversations output "+ e}
+
+@app.post("/create_conversation")
+async def create_conversation(conversation_payload: ConversationEntryData):
+    try:
+        # Validate the type
+        if conversation_payload.type != "chart" and conversation_payload.type != "conversation":
+            raise HTTPException(status_code=400, detail="Invalid type. Type must be 'chart' or 'conversation'.")
+
+
+        if len(conversation_payload.conversationHistory) < 5 :
+            # We don't save conversations that are lesser than 5 messages long
+            pass
+        else:
+            # Convert conversation history to JSON
+            message_history_json = jsonable_encoder(conversation_payload.conversationHistory)
+
+            # Insert the title and type into the conversationsMetadata table
+            query = conversationsMetadata.insert().values(
+                title=conversation_payload.title,
+                type=conversation_payload.type,
+                message_history=message_history_json
+            )
+
+            last_record_id = await database.execute(query)
+            return {"title": conversation_payload.title, "type": conversation_payload.type, "id": last_record_id}
+    except Exception as e:
+        logging.error(f"Error creating conversation: {e}")
+        raise HTTPException(status_code=400, detail="Error creating conversation")
+
 
 @app.post("/query_chart")
 async def query_chart(query_request: ChartQueryRequest) -> ChartQueryResponse:
