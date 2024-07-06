@@ -10,6 +10,8 @@ import {
   AIChatBotRequestTypes,
   AIChatBotResponseTypes,
   AIRequestPayload,
+  ConversationEntryData,
+  ConversationMetadata,
   FollowUpQuestionsResponse,
   Message,
   MessageContentTypeEnum,
@@ -19,6 +21,11 @@ import VegaChart from "../dynamicCharts/VegaChart";
 import { Button } from "@/components/ui/button";
 import { ChartsData } from "../dynamicCharts/types";
 import PreviousConversationsSheet from "./PreviousConversationsSheet";
+import {
+  createConversationEntry,
+  usePreviousConversationsMetadata,
+} from "api/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface ReusableChatbotProps {
   initialMessage: string;
@@ -32,7 +39,6 @@ interface ReusableChatbotProps {
   chartData?: any;
   followUpQuestionsCount?: number;
   saveChart?: (chartData: ChartsData) => void;
-  pastConversations?: string[];
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -43,7 +49,6 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   chartData,
   followUpQuestionsCount = 3,
   saveChart,
-  pastConversations = [],
 }) => {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
@@ -56,8 +61,31 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
     followUpQuestionsInitial
   );
+
   const [loading, setLoading] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
+  const pathName = window.location.pathname; // chatbot , explore
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    return () => {
+      console.log("unmounting");
+      // Save only if there are more than three messages exchangeed between the user and the bot
+
+      const payload: ConversationEntryData = {
+        title: messages[0].content,
+        type: pathName.substring(1) === "chatbot" ? "conversation" : "chart",
+        conversationHistory: messages,
+      };
+
+      console.log("Sending payload to db ", payload);
+      // trigger api call to create an entry to the conversations database
+      createConversationEntry(payload);
+      queryClient.invalidateQueries({
+        queryKey: [`${pathName.substring(1)}-conversations`],
+      });
+    };
+  }, []);
 
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -119,6 +147,16 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     setQuery(chipQuestion);
     handleSubmit(e, chipQuestion);
   };
+
+  const {
+    data: prevConversations,
+    isLoading,
+    error,
+  } = usePreviousConversationsMetadata(pathName);
+
+  if (isLoading) {
+    return <div>Loading History</div>;
+  }
 
   return (
     <div className="chatbot">
@@ -203,9 +241,14 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
         </div>
       </form>
       <div className=" absolute left-0 top-[50%] ">
-        <PreviousConversationsSheet prevConverationData={[]} loadPrevConv={function (convId: string): void {
-          throw new Error("Function not implemented.");
-        } }  />
+        <PreviousConversationsSheet
+          prevConverationData={
+            prevConversations || ([] as ConversationMetadata[])
+          }
+          loadPrevConv={function (convId: string): void {
+            console.log("method not implemented");
+          }}
+        />
       </div>
     </div>
   );

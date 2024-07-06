@@ -32,3 +32,14 @@ export enum MessageRolesEnum {
   export type AIChatBotRequestTypes = AIRequestPayload | AIChartQueryRequest;
   
   export type AIChatBotResponseTypes = AIResponsePayload;
+
+  export type ConversationMetadata = {
+    title: string;
+    id: string;
+  }
+
+  export type ConversationEntryData = {
+    title: string;
+    type: string;
+    conversationHistory: Message[];
+  }

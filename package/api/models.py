@@ -1,6 +1,6 @@
 from sqlalchemy import Table, Column, Integer, String, Float, Date, JSON, Text, text
 from sqlalchemy.sql.sqltypes import Float
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from database import metadata
 
 protein_data = Table(
@@ -78,4 +78,13 @@ charts = Table(
     Column("chart_id", UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()")),
     Column("chart_data", JSON),
     Column("chart_spec", JSON),
+)
+
+conversationsMetadata = Table(
+    "conversationsMetadata", metadata,
+    Column("id", UUID(as_uuid=True), primary_key=True, server_default=text("uuid_generate_v4()")),
+    Column("type", String(15), nullable=False),
+    Column("title", String),
+    Column("message_history", JSONB),
+    schema="public"
 )

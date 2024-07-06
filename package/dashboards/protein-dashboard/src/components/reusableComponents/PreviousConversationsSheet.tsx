@@ -10,9 +10,10 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { ConversationMetadata } from "api/types";
 
 interface PreviousConversationsSheetProps {
-  prevConverationData: { title: string; id: string }[];
+  prevConverationData: ConversationMetadata[];
   loadPrevConv: (convId: string) => void;
 }
 

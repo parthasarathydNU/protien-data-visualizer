@@ -15,12 +15,13 @@ import { useQuery } from "@tanstack/react-query";
 
 export const GetUseQuery = (
   queryKey: string[],
-  queryFn: Promise<any[] | undefined>
+  queryFn: Promise<any[] | undefined>,
+  options?: any ,
 ) => {
   return useQuery({
     queryKey,
     queryFn: () => queryFn,
-    staleTime: Infinity, // Data never goes stale automatically
+    staleTime: options?.staleTime || Infinity, // Data never goes stale automatically
     refetchOnWindowFocus: false, // Do not refetch on window focus
     refetchOnReconnect: false, // Do not refetch on reconnect
     refetchOnMount: false, // Do not refetch on mount
