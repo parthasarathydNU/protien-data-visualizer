@@ -24,11 +24,6 @@ const Layout: React.FC = () => {
               </Button>
             </a>
 
-            <Link to="/explore" className="hover:underline">
-              <Button variant={"secondary"}>
-                <AreaChart /> Explore Data
-              </Button>
-            </Link>
             <Link to="/chatbot" className="hover:underline">
               <div className="flex items-center gap-2">
                 <Button variant={"secondary"}>
@@ -39,6 +34,13 @@ const Layout: React.FC = () => {
                 </Button>
               </div>
             </Link>
+
+            <Link to="/explore" className="hover:underline">
+              <Button variant={"secondary"}>
+                <AreaChart /> Explore Data
+              </Button>
+            </Link>
+
             {/* <Link to="/visualization" className="hover:underline">Visualize</Link> */}
             {/* <Link to="/add-protein" className="hover:underline">Add Protein</Link> */}
           </div>
