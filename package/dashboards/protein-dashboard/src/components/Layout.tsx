@@ -2,7 +2,8 @@ import React from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AreaChart } from "lucide-react";
-import { DatabaseZap } from 'lucide-react';
+import { DatabaseZap } from "lucide-react";
+import { Youtube } from "lucide-react";
 
 const Layout: React.FC = () => {
   return (
@@ -10,9 +11,19 @@ const Layout: React.FC = () => {
       <header className="bg-blue-600 text-white py-4">
         <nav className="container mx-auto flex justify-start gap-3 items-center md:justify-between  ">
           <Link to="/" className="hover:underline">
-            <h1 className="text-xl font-bold">Protein Dashboard</h1>
+            <h1 className="text-xl font-bold">GenoQuery</h1>
           </Link>
           <div className="space-x-4 flex gap-2">
+            <a
+              href="https://www.youtube.com/playlist?list=PLuJI6RWPU5Viiw0ph9CwXEYWb27ss0tjd"
+              target={"_blank"}
+            >
+              <Button variant={"secondary"} className="flex items-center gap-1">
+                <Youtube />
+                How to use GenoQuery
+              </Button>
+            </a>
+
             <Link to="/explore" className="hover:underline">
               <Button variant={"secondary"}>
                 <AreaChart /> Explore Data
@@ -20,7 +31,12 @@ const Layout: React.FC = () => {
             </Link>
             <Link to="/chatbot" className="hover:underline">
               <div className="flex items-center gap-2">
-                <Button variant={"secondary"}> <div className="flex gap-2 items-center"><DatabaseZap /> SQL Chat Bot </div></Button>
+                <Button variant={"secondary"}>
+                  {" "}
+                  <div className="flex gap-2 items-center">
+                    <DatabaseZap /> SQL Chat Bot{" "}
+                  </div>
+                </Button>
               </div>
             </Link>
             {/* <Link to="/visualization" className="hover:underline">Visualize</Link> */}
