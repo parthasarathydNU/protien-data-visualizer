@@ -244,7 +244,7 @@ async def query_model(query_request: QueryRequest) -> QueryResponse:
         # If it is a normal question, then just pass it along to the conversation chain
         if classification == "conversation":
             # Invoke the LLMChain to get the response
-            result = get_ai_response_for_conversation(query_request.context)
+            result = get_ai_response_for_conversation(query_request)
             return {"response": result, "type" : ChatResponseTypes.conversation}
         else :
             result = query_database(userQuery, query_request.context[:-1])
@@ -332,7 +332,7 @@ async def query_chart(query_request: ChartQueryRequest) -> ChartQueryResponse:
         # If it is a normal question, then just pass it along to the conversation chain
         if classification == "conversation":
             # Invoke the LLMChain to get the response
-            result = get_ai_response_for_chart_conversation(query_request.context,  query_request.table_name)
+            result = get_ai_response_for_chart_conversation(query_request,  query_request.table_name)
             return {
                         "type": ChatResponseTypes.conversation,
                         "response" : result

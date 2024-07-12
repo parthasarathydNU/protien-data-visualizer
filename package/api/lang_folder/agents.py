@@ -25,14 +25,23 @@ def get_few_shot_examples():
     return few_shot_examples
 
 def get_ai_response_for_conversation(conversation):
-    formatted_conversation = _helperFunctions["formatConversationForLLM"](conversation)
+    
+    # Append the user query to the context
+    _helperFunctions["combineQueryIntoConversation"](conversation)
+
+    formatted_conversation = _helperFunctions["formatConversationForLLM"](conversation.context)
     print(f"formatted_conversation {formatted_conversation}")
     result = conversation_chain.invoke({"table_info" : db.table_info , "conversation" : formatted_conversation})
     print(f"Result from ai {result}")
     return result
 
 def get_ai_response_for_chart_conversation(conversation, tableName):
-    formatted_conversation = _helperFunctions["formatConversationForLLM"](conversation)
+
+        
+    # Append the user query to the context
+    _helperFunctions["combineQueryIntoConversation"](conversation)
+
+    formatted_conversation = _helperFunctions["formatConversationForLLM"](conversation.context)
     print(f"formatted_conversation {formatted_conversation}")
     result = chart_conversation_chain.invoke({"conversation" : formatted_conversation, "input": "Describe the {tableName} table".format(tableName=tableName)})
     print(f"Result from ai {result}")
@@ -80,5 +89,6 @@ Table Description:The protein_data table holds information related to proteins, 
 """
 
 _helperFunctions = {
+    "combineQueryIntoConversation" : lambda conversation : conversation.context.append({ 'role' : 1, 'content' : conversation.query, 'type': 'conversation'}),
     "formatConversationForLLM": lambda conversation : [('ai' if entry["role"] == 'assistant' else 'human', entry["content"]) for entry in conversation]
 }
