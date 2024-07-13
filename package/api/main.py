@@ -11,7 +11,7 @@ from sqlalchemy import select
 from contextlib import asynccontextmanager
 from vector_store.pineconevectorstoreclient import PineconeVectorStoreClient
 from queryModel import FeedbackResponsePayload, QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
-from util_functions import process_protein_data
+from util_functions import process_protein_data, find_keyword
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation
@@ -280,10 +280,19 @@ async def query_model(query_request: QueryRequest) -> QueryResponse:
     user_query = query_request.query
 
     try:
-        classification = classify_input_string_for_conversation(user_query)
-        logger.info(f"User input classified as {classification}")
+        
+        # Check if given input is query or a conversation
+        classification = classify_input_string_for_conversation(query_request)
+        print(f"\nThe user input is classified as {classification}")
 
+        classification = find_keyword(classification)
+
+        if classification is None:
+            return {"response": "Kindly retry", "type" : ChatResponseTypes.conversation}
+
+        # If it is a normal question, then just pass it along to the conversation chain
         if classification == "conversation":
+            # Invoke the LLMChain to get the response
             result = get_ai_response_for_conversation(query_request)
         else:
             result = query_database(user_query, query_request.context[:-1])
