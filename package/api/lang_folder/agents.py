@@ -1,7 +1,8 @@
 from lang_folder.database import db
 from queryModel import QueryRequest
+from lang_folder.utils import find_relevant_tables
 from lang_folder.few_shot_examples import few_shot_examples
-from lang_folder.chains import classification_chain, conversation_chain, generate_response_with_table_info, follow_up_questions_chain, chart_classification_chain, generate_chart_spec_with_table_info, chart_conversation_chain, find_relevant_tables
+from lang_folder.chains import classification_chain, conversation_chain, generate_response_with_table_info, follow_up_questions_chain, chart_classification_chain, generate_chart_spec_with_table_info, chart_conversation_chain
 
 # Function to classify a given input string
 def classify_input_string_for_conversation(query: QueryRequest):
