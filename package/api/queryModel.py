@@ -12,6 +12,7 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     response: str   
     type: ChatResponseTypes
+    queryId: str = None
 
 class ChartQueryRequest(QueryRequest):
     table_name: str # Mandatory for chart generation

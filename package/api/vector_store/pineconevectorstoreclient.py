@@ -9,18 +9,17 @@ DEFAULT_INDEX_ID = "default_index"
 class PineconeVectorStoreClient:
     def __init__(self, api_key: str, environment: str, index_name: str = DEFAULT_INDEX_ID):
         self.index_name = index_name
-        pinecone.init(api_key=api_key, environment=environment)
-        if not pinecone.list_indexes():
+        self.pc = pinecone(api_key=os.getenv('PINECONE_API_KEY'))
+        if not self.pc.list_indexes():
             self.create_index(dimension=1536)
         self.index = pinecone.Index(index_name)
-        self.langchain_vector_store = Pinecone(self.index)
         self.embedding_model = OpenAIEmbeddings(api_key=os.getenv('OPENAI_API_KEY'))
 
     def create_index(self, dimension: int, metric: str = 'cosine'):
-        pinecone.create_index(self.index_name, dimension=dimension, metric=metric)
+        self.pc.create_index(self.index_name, dimension=dimension, metric=metric)
 
     def delete_index(self):
-        pinecone.delete_index(self.index_name)
+        self.pc.delete_index(self.index_name)
 
     def upsert_data(self, data: dict) -> None:
         self.index.upsert(vectors=data)
@@ -36,12 +35,12 @@ class PineconeVectorStoreClient:
         self.upsert_data(vectors)
 
     def search_documents(self, query_embedding: list, top_k: int = 10):
-        response = self.langchain_vector_store.query(query_embedding, top_k=top_k)
+        response = self.pc.query(query_embedding, top_k=top_k)
         return response['matches']
 
     def initialize_client(self, examples: list):
         # Ensure index exists
-        if self.index_name not in pinecone.list_indexes():
+        if self.index_name not in self.pc.list_indexes():
             self.create_index(dimension=1536)
 
         # Add example documents

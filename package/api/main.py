@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 from pydantic import BaseModel
 from lang_folder.few_shot_examples import few_shot_examples
+from temp_memory_store import memory_store
 
 #TODO: should this be in a separate file?
 class FeedbackPayload(BaseModel):
@@ -290,11 +291,24 @@ async def query_model(query_request: QueryRequest) -> QueryResponse:
         if classification == "conversation":
             # Invoke the LLMChain to get the response
             result = get_ai_response_for_conversation(query_request)
-            return {"response": result, "type" : ChatResponseTypes.conversation}
         else :
             result = query_database(userQuery, query_request.context[:-1])
             # Else pass it to the query generation chain
-            return {"response": result, "type" : ChatResponseTypes.conversation}
+
+        text_to_store = f"input: {userQuery}, query: {result}"
+
+        text_metadata = {
+            "input": userQuery,
+            "query": result
+        }
+        
+        temp_id = memory_store.set(text_to_store)
+
+        memory_store.update_metadata(temp_id, text_metadata)
+        
+        return {"response": result, "type" : ChatResponseTypes.conversation, "queryId": temp_id}
+
+
 
     except Exception as e:
         print(e)
