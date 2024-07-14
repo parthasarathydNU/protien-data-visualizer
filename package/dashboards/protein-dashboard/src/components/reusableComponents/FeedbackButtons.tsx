@@ -23,11 +23,21 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({ queryId, response }) 
       }
   };
 
-  return (
-    <div>
-      <Button onClick={() => handleFeedback(true)} className="bg-transparent">👍</Button>
-      <Button onClick={() => handleFeedback(false)} className="bg-transparent">👎</Button>
-      {feedback !== null && <div>Thank you for your feedback!</div>}
+    return (
+    <div className="feedback-container">
+      <Button
+        onClick={() => handleFeedback(true)}
+        className={`feedback-button ${feedback === true ? 'highlighted' : ''}`}
+      >
+        👍
+      </Button>
+      <Button
+        onClick={() => handleFeedback(false)}
+        className={`feedback-button ${feedback === false ? 'highlighted' : ''}`}
+      >
+        👎
+      </Button>
+      {feedback !== null && <div className="feedback-message">Thank you for your feedback!</div>}
     </div>
   );
 };
