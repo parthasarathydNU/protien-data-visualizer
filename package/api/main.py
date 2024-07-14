@@ -15,7 +15,15 @@ from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation
 from fastapi.middleware.cors import CORSMiddleware
+import os
+from pydantic import BaseModel
+from lang_folder.few_shot_examples import few_shot_examples
 
+#TODO: should this be in a separate file?
+class FeedbackPayload(BaseModel):
+    queryId: str
+    response: str
+    isPositive: bool
 
 
 logging.basicConfig(level=logging.INFO)
@@ -26,6 +34,12 @@ load_dotenv()
 # Retrieve OpenAI API key from environment variables
 # openai.api_key = os.getenv('OPENAI_API_KEY')
 
+#setup vector DB
+#TODO: switch to dependency injection
+texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
+metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
+
+vector_store = PineConeVectorStoreClient(api_key=os.getenv('PINECONE_API_KEY'), environment='us-east-1'))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

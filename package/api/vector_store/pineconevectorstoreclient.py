@@ -1,6 +1,8 @@
+import os
 import pinecone
 from langchain.vectorstores import Pinecone
 from langchain.embeddings.openai import OpenAIEmbeddings
+from uuid import uuid4
 
 DEFAULT_INDEX_ID = "default_index"
 
@@ -9,9 +11,10 @@ class PineconeVectorStoreClient:
         self.index_name = index_name
         pinecone.init(api_key=api_key, environment=environment)
         if not pinecone.list_indexes():
-            self.create_index(dimension=128)
+            self.create_index(dimension=1536)
         self.index = pinecone.Index(index_name)
         self.langchain_vector_store = Pinecone(self.index)
+        self.embedding_model = OpenAIEmbeddings(api_key=os.getenv('OPENAI_API_KEY'))
 
     def create_index(self, dimension: int, metric: str = 'cosine'):
         pinecone.create_index(self.index_name, dimension=dimension, metric=metric)
@@ -39,7 +42,19 @@ class PineconeVectorStoreClient:
     def initialize_client(self, examples: list):
         # Ensure index exists
         if self.index_name not in pinecone.list_indexes():
-            self.create_index(dimension=128)
+            self.create_index(dimension=1536)
 
         # Add example documents
         self.add_documents(examples)
+    
+    def embed_and_convert(self, texts: list, metadata_list: list) -> list:
+        documents = []
+        for i, text in enumerate(texts):
+            embedding = self.embedding_model.embed_query(text)
+            document = {
+                "id": uuid4(),
+                "embedding": embedding,
+                "metadata": metadata_list[i]
+            }
+            documents.append(document)
+        return documents
