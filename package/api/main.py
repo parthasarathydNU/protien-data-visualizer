@@ -9,6 +9,7 @@ from database import database
 import logging
 from sqlalchemy import select
 from contextlib import asynccontextmanager
+from vector_store.pineconevectorstoreclient import PineconeVectorStoreClient
 from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
 from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
@@ -39,7 +40,8 @@ load_dotenv()
 texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
 metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
 
-vector_store = PineConeVectorStoreClient(api_key=os.getenv('PINECONE_API_KEY'), environment='us-east-1'))
+vector_store = PineconeVectorStoreClient(api_key=os.getenv('PINECONE_API_KEY'), environment='us-east-1')
+vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -220,6 +222,35 @@ async def delete_protein(entry: str):
     await database.execute(query)
     return {"message": "Protein deleted successfully"}
 
+
+
+# APIS FOR FEEDBACK
+# ====================================================================
+
+@app.post("/submit_feedback")
+async def submit_feedback(feedback: FeedbackPayload):
+    try:
+        vector = await generate_vector_from_response(feedback.response)
+
+        feedback_data = {
+            "id": feedback.queryId,
+            "values": vector,
+            "metadata": {
+                "response": feedback.response,
+                "isPositive": feedback.isPositive,
+            },
+        }
+
+        await pinecone.upsert(
+            index_name="feedback-index",
+            upsert_request={"vectors": [feedback_data]}
+        )
+
+        return {"message": "Feedback submitted successfully"}
+    except Exception as e:
+        logging.error(f"Error submitting feedback: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit feedback")
+    
 # APIS FOR CHATBOTS
 # ====================================================================
 @app.post("/query_followup/")

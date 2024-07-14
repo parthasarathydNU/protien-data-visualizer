@@ -1,7 +1,7 @@
 import os
 import pinecone
-from langchain.vectorstores import Pinecone
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Pinecone
+from langchain_community.embeddings.openai import OpenAIEmbeddings
 from uuid import uuid4
 
 DEFAULT_INDEX_ID = "default_index"
