@@ -20,6 +20,8 @@ import os
 from pydantic import BaseModel
 from lang_folder.few_shot_examples import few_shot_examples
 from temp_memory_store import memory_store
+from nltk_setup import download_nltk_resources
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -47,6 +49,8 @@ try:
 except Exception as e:
     logger.error(f"Error initializing Pinecone Vector Store: {e}")
     raise
+
+download_nltk_resources()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

@@ -18,3 +18,5 @@ pymysql
 chromadb
 pinecone
 pinecone-client[grpc]
+
+nltk

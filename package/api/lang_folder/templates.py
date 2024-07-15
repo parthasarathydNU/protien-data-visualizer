@@ -109,18 +109,26 @@ Classification:
 """
 
 FORMAT_ANSWER_FROM_QUERY_TEMPLATE = """
-Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
-Return the response in markdown format ensuring proper spacing, alignment , bullets, bold, various heading tags where required
+Task:
+- Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+- Question: {question}
+- SQL Query: {query}
+- SQL Result: {result}
 
-Summarize the answer and give the user insights and absolutely required infromation.
-Provide long form answers only if explicitly requested.
-Show a preview of the content if the content is too long.
+Instructions:
+- If the SQL Result is Empty, respond saying that there was not data available for the selected query.
+- Do not generate new infromation outside provided context unless explicitly asked for.
+- Return the response in markdown format ensuring proper spacing, alignment , bullets, bold, various heading tags where required
+- Summarize the answer and give the user insights and absolutely required infromation.
+- Show a preview of the content if the content is too long.
+- Provide long form answers only if explicitly requested.
+- Include the SQL Query in the response. Ensure to have spacing between the different sections of the answer
 
-Question: {question}
-SQL Query: {query}
-SQL Result: {result}
-Answer: """
+Answer: 
+
+"""
+
 
 SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE = """
 You are a MySQL expert. Given an input question, create a syntactically correct SQL query to run. Unless otherwise specificed.
