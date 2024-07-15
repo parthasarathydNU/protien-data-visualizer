@@ -43,3 +43,20 @@ def process_protein_data(protein):
         "amino_acid_composition": amino_acid_composition,
         "secondary_structure": secondary_structure,
     }
+
+
+def find_keyword(text):
+    """
+    This function checks whether the work conversation or query is present in the result
+    """
+    # Define the regex pattern to match the words 'conversation' or 'query'
+    pattern = r'\b(conversation|query)\b'
+    
+    # Use re.search to find the pattern in the text
+    match = re.search(pattern, text, re.IGNORECASE)
+    
+    # Return the matched keyword if found, otherwise None
+    if match:
+        return match.group(0).lower()
+    else:
+        return None

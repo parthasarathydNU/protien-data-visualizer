@@ -3,14 +3,13 @@
 INPUT_CLASSIFICATION_PROMPT_TEMPLATE = """
 Classify the input as 'query' or 'conversation'.
 
+Use the conversation history for context.
+
 Definitions:
 - 'Query': Uses SQL or implies data retrieval from a database.
 - 'Conversation': Dialogue unrelated to SQL or needs clarification.
 
 Examples:
-Input: "SELECT name, age FROM users WHERE age > 30"
-Classification: query
-
 Input: "What are the main protein families available in the database?"
 Classification: query
 
@@ -23,9 +22,54 @@ Classification: query
 Input: "Tell me a joke."
 Classification: conversation
 
+Input: "Can you provide information on a specific protein?"
+Classification: conversation
+
+Input: "Show me the protein data for entry ID 123"
+Classification: query
+
+Input: "What is the amino acid sequence for protein ID 456?"
+Classification: query
+
+Input: "Explain protein folding"
+Classification: conversation
+
+Input: "Can you tell me more about protein interactions?"
+Classification: conversation
+
+Input: "I need details on a protein."
+Classification: conversation
+
+Input: "Could you assist with protein analysis?"
+Classification: conversation
+
+Input: "Do you have data on proteins?"
+Classification: conversation
+
+Input: "Can you find the protein with the highest interaction count?"
+Classification: query
+
+Input: "I'm looking for information on proteins."
+Classification: conversation
+
+Input: "Can you provide information on a specific protein entry?"
+Classification: conversation
+
+Input: "Do you have specific data on protein functions?"
+Classification: conversation
+
+Input: "Can you show me data for a specific protein?"
+Classification: conversation
+
+Input: "Can you retrieve specific protein interaction data?"
+Classification: conversation
+
+Input: "I need specific details on protein ID 789"
+Classification: query
+
 Guidelines:
 - SQL commands or clear query suggestions: 'query'.
-- Casual dialogue or ambiguous queries: 'conversation'.
+- Casual dialogue, ambiguous queries, or requests needing clarification: 'conversation'.
 
 Classify this input:
 Input: "{input_string}"
@@ -65,14 +109,26 @@ Classification:
 """
 
 FORMAT_ANSWER_FROM_QUERY_TEMPLATE = """
-Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 
-Return the response in markdown format ensuring proper spacing, alignment , bullets, bold, various heading tags where required
+Task:
+- Given the following user question, corresponding SQL query, and SQL result, answer the user question.
+- Question: {question}
+- SQL Query: {query}
+- SQL Result: {result}
 
-Question: {question}
-SQL Query: {query}
-SQL Result: {result}
-Answer: """
+Instructions:
+- If the SQL Result is Empty, respond saying that there was not data available for the selected query.
+- Do not generate new infromation outside provided context unless explicitly asked for.
+- Return the response in markdown format ensuring proper spacing, alignment , bullets, bold, various heading tags where required
+- Summarize the answer and give the user insights and absolutely required infromation.
+- Show a preview of the content if the content is too long.
+- Provide long form answers only if explicitly requested.
+- Include the SQL Query in the response. Ensure to have spacing between the different sections of the answer
+
+Answer: 
+
+"""
+
 
 SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE = """
 You are a MySQL expert. Given an input question, create a syntactically correct SQL query to run. Unless otherwise specificed.
@@ -167,9 +223,9 @@ Here is information about the data source :
 """
 
 SYSTEM_PROMPT_FOR_NORMAL_CONVERSATION_TEMPLATE = """
-You are an intelligent assistant capable of having conversations about a protein database
+You are GenoQuery, a senior researcher in protein data analysis. Assist other researchers with protein data queries.  If users ask vague questions, such as "Can you provide information on a specific protein?" or "Can you show me the protein data for a specific entry?", push them for clarity rather than generating an inaccurate response.  Use the database schema for accurate responses and guide users back to relevant topics if they stray off-topic.
 
-Here is some information about the database schema:
+Here is the database schema:
 
 {table_info}
 

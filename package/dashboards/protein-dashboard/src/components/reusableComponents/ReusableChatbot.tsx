@@ -26,7 +26,8 @@ import {
   usePreviousConversationsMetadata,
 } from "api/api";
 import { useQueryClient } from "@tanstack/react-query";
-import FeedbackButtons from './FeedbackButtons';
+import FeedbackButtons from "./FeedbackButtons";
+
 
 
 interface ReusableChatbotProps {
@@ -41,6 +42,7 @@ interface ReusableChatbotProps {
   chartData?: any;
   followUpQuestionsCount?: number;
   saveChart?: (chartData: ChartsData) => void;
+  prevConversations: any[]
 }
 
 const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
@@ -51,7 +53,9 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
   chartData,
   followUpQuestionsCount = 3,
   saveChart,
+  prevConversations
 }) => {
+  
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -67,8 +71,9 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
 
   const [loading, setLoading] = useState(false);
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const pathName = window.location.pathname; // chatbot , explore
   const queryClient = useQueryClient();
+
+  const pathName = window.location.pathname; // chatbot , explore
 
   useEffect(() => {
     return () => {
@@ -151,16 +156,6 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
     setQuery(chipQuestion);
     handleSubmit(e, chipQuestion);
   };
-
-  const {
-    data: prevConversations,
-    isLoading,
-    error,
-  } = usePreviousConversationsMetadata(pathName);
-
-  if (isLoading) {
-    return <div>Loading History</div>;
-  }
 
   return (
     <div className="chatbot">

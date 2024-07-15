@@ -1,5 +1,5 @@
 import {
-  getAIChartResponse,
+  getAIChartResponse, usePreviousConversationsMetadata,
 } from "api/api";
 import { AIChartQueryRequest, AIChatBotRequestTypes } from "api/types";
 import ReusableChatBot from "components/reusableComponents/ReusableChatbot";
@@ -10,6 +10,19 @@ interface ChartGeneratorProps {
 }
 
 const ChartGeneratorChat : React.FC<ChartGeneratorProps> = ({saveChart}) =>  {
+
+  const pathName = window.location.pathname; // chatbot , explore
+
+  const {
+    data: prevConversations,
+    isLoading,
+    error,
+  } = usePreviousConversationsMetadata(pathName);
+
+  if (isLoading) {
+    return <div>Loading History</div>;
+  }
+
   const getAIChartRes = async (payload: AIChatBotRequestTypes) => {
     const AiChartPayload: AIChartQueryRequest = {
       ...payload,
@@ -18,6 +31,8 @@ const ChartGeneratorChat : React.FC<ChartGeneratorProps> = ({saveChart}) =>  {
 
     return await getAIChartResponse(AiChartPayload);
   };
+
+
 
   return (
     <div>
@@ -29,6 +44,7 @@ const ChartGeneratorChat : React.FC<ChartGeneratorProps> = ({saveChart}) =>  {
           Promise.resolve({ follow_up_questions: [] })
         }
         saveChart={saveChart}
+        prevConversations={prevConversations || []}
         chartData={ [
             {
               codon: "UAA",

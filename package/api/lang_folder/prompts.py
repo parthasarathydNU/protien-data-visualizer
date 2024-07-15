@@ -9,6 +9,12 @@ INPUT_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
     INPUT_CLASSIFICATION_PROMPT_TEMPLATE
 )
 
+INPUT_CLASSIFICATION_PROMPT_2 = ChatPromptTemplate.from_messages([
+    ("system", INPUT_CLASSIFICATION_PROMPT_TEMPLATE),
+    ("placeholder", "{conversation}"),
+])
+
+
 CHART_CLASSIFICATION_PROMPT = PromptTemplate.from_template(
     CHART_CLASSIFICATION_PROMPT_TEMPLATE
 )
@@ -100,6 +106,7 @@ GENERATE_QUERY_PROMPT_WITH_FEW_SHOT_SELECTION = ChatPromptTemplate.from_messages
     [
         ("system", SYSTEM_PROMPT_FOR_QUERY_GENERATION_TEMPLATE),
         DYNAMIC_FEW_SHOT_PROMPT_WITH_EXAMPLE_SELECTION,
+        ("placeholder", "{conversation}"),
         ("human", "{input}\n\nSQL: "),
     ]
 )
