@@ -26,6 +26,11 @@ class CreateChartRequest(BaseModel):
     chart_data: str
     chart_spec: str
 
+class FeedbackResponsePayload(BaseModel):
+    queryId: str
+    response: str
+    isPositive: bool
+
 
 
 # QUERY PROMPTS =====================================
