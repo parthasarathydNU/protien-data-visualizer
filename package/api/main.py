@@ -9,23 +9,44 @@ from database import database
 import logging
 from sqlalchemy import select
 from contextlib import asynccontextmanager
-from queryModel import QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
+from vector_store.pineconevectorstoreclient import PineconeVectorStoreClient
+from queryModel import FeedbackResponsePayload, QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
 from util_functions import process_protein_data
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from lang_folder.agents import classify_input_string_for_conversation, get_ai_response_for_conversation, query_database, get_follow_up_questions_from_ai, get_table_names, classify_input_string_for_chart, generate_chart_spec, get_ai_response_for_chart_conversation
 from fastapi.middleware.cors import CORSMiddleware
-
-
+import os
+from pydantic import BaseModel
+from lang_folder.few_shot_examples import few_shot_examples
+from temp_memory_store import memory_store
 
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Retrieve OpenAI API key from environment variables
-# openai.api_key = os.getenv('OPENAI_API_KEY')
+# Validate required environment variables
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+PINECONE_API_KEY = os.getenv('PINECONE_API_KEY')
+if not OPENAI_API_KEY or not PINECONE_API_KEY:
+    logger.error("Missing required environment variables OPENAI_API_KEY or PINECONE_API_KEY.")
+    raise EnvironmentError("Missing required environment variables OPENAI_API_KEY or PINECONE_API_KEY.")
 
+# Initialize Pinecone Vector Store
+#TODO: switch to dependency injection
+try:
+    texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
+    metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
+
+    vector_store = PineconeVectorStoreClient()
+    if not vector_store.is_base_data_loaded():
+        vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
+    logger.info("Pinecone Vector Store initialized successfully.")
+except Exception as e:
+    logger.error(f"Error initializing Pinecone Vector Store: {e}")
+    raise
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -206,6 +227,31 @@ async def delete_protein(entry: str):
     await database.execute(query)
     return {"message": "Protein deleted successfully"}
 
+
+
+# APIS FOR FEEDBACK
+# ====================================================================
+
+# Endpoint to submit feedback
+@app.post("/submit_feedback")
+async def submit_feedback(feedback: FeedbackResponsePayload):
+    try:
+        retrieved_message_data = memory_store.get(feedback.queryId)
+        if not retrieved_message_data:
+            raise HTTPException(status_code=404, detail="Query ID not found in memory store.")
+        logger.info(f"Retrieved message data: {retrieved_message_data}")
+
+        embedded_data = vector_store.embed_and_convert([retrieved_message_data.value], [retrieved_message_data.metadata])
+        vector_store.add_documents(embedded_data)
+        logger.info("Feedback submitted successfully.")
+
+        return {"message": "Feedback submitted successfully"}
+    except HTTPException as http_err:
+        raise http_err
+    except Exception as e:
+        logger.error(f"Error submitting feedback: {e}")
+        raise HTTPException(status_code=500, detail="Failed to submit feedback")
+    
 # APIS FOR CHATBOTS
 # ====================================================================
 @app.post("/query_followup/")
@@ -227,34 +273,31 @@ async def query_followup(query_request: QueryRequest):
         return {"follow_up_questions": [""]}
 
 
+# Endpoint to handle user queries
 @app.post("/query/")
 async def query_model(query_request: QueryRequest) -> QueryResponse:
-
-    print(f"\nData coming in to query : {query_request}")
-
-    # Pick the last conversation from the user
-    userQuery = query_request.query
+    logger.info(f"Data received in query: {query_request}")
+    user_query = query_request.query
 
     try:
-        
-        # Check if given input is query or a conversation
-        classification = classify_input_string_for_conversation(userQuery)
-        print(f"\nThe user input is classified as {classification}")
+        classification = classify_input_string_for_conversation(user_query)
+        logger.info(f"User input classified as {classification}")
 
-        # If it is a normal question, then just pass it along to the conversation chain
         if classification == "conversation":
-            # Invoke the LLMChain to get the response
             result = get_ai_response_for_conversation(query_request)
-            return {"response": result, "type" : ChatResponseTypes.conversation}
-        else :
-            result = query_database(userQuery, query_request.context[:-1])
-            # Else pass it to the query generation chain
-            return {"response": result, "type" : ChatResponseTypes.conversation}
+        else:
+            result = query_database(user_query, query_request.context[:-1])
 
+        text_to_store = f"input: {user_query}, query: {result}"
+        text_metadata = {"input": user_query, "query": result}
+
+        temp_id = memory_store.set(text_to_store)
+        memory_store.update_metadata(temp_id, text_metadata)
+
+        return {"response": result, "type": ChatResponseTypes.conversation, "queryId": temp_id}
     except Exception as e:
-        print(e)
-        # raise HTTPException(status_code=500, detail=str(e))
-        return {"response": "Error in forming output "+ e}
+        logger.error(f"Error processing query: {e}")
+        raise HTTPException(status_code=500, detail=f"Error processing query: {e}")
     
 
 # chart / conversation

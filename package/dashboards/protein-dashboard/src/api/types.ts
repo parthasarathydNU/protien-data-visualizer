@@ -11,17 +11,17 @@ export enum MessageRolesEnum {
     role: MessageRolesEnum;
     content: string;
     type: MessageContentTypeEnum;
-    id?: string | undefined;
+    queryId?: string | undefined;
   };
   
   export type AIRequestPayload = {
     query: string;
     context: Message[];
-    id?: string | undefined;
+    queryId?: string | undefined;
   };
   
   export type AIResponsePayload = {
-    id?: string | undefined;
+    queryId?: string | undefined;
     type: MessageContentTypeEnum,
     response: string;
   }
