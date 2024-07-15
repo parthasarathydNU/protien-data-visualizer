@@ -26,7 +26,8 @@ import {
   usePreviousConversationsMetadata,
 } from "api/api";
 import { useQueryClient } from "@tanstack/react-query";
-import FeedbackButtons from './FeedbackButtons';
+import FeedbackButtons from "./FeedbackButtons";
+
 
 
 interface ReusableChatbotProps {
