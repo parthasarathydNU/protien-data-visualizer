@@ -58,7 +58,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
       role: MessageRolesEnum.assistant,
       content: initialMessage,
       type: MessageContentTypeEnum.conversation,
-      id: "initial",
+      queryId: "initial",
     },
   ]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
@@ -124,7 +124,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
         role: MessageRolesEnum.assistant,
         content: response.response,
         type: response.type,
-        id: response.id,
+        queryId: response.queryId,
       },
     ]);
     setLoading(false);
@@ -202,8 +202,8 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
                 >
                   {msg.content}
                 </Markdown>
-                {msg.id !== 'initial' && (
-    <FeedbackButtons queryId={msg.id!} response={msg.content} />
+                {msg.queryId !== 'initial' && (
+    <FeedbackButtons queryId={msg.queryId!} response={msg.content} />
   )}
 
                 </>

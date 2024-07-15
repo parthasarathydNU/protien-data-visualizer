@@ -37,12 +37,13 @@ load_dotenv()
 # openai.api_key = os.getenv('OPENAI_API_KEY')
 
 #setup vector DB
-#TODO: switch to dependency injection
+#TODO: switch to dependency injection instead of manual setup here
 texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
 metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
 
 vector_store = PineconeVectorStoreClient()
-vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
+if not vector_store.is_base_data_loaded():
+    vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -231,21 +232,14 @@ async def delete_protein(entry: str):
 @app.post("/submit_feedback")
 async def submit_feedback(feedback: FeedbackPayload):
     try:
-        vector = await generate_vector_from_response(feedback.response)
+        retrieved_message_data = memory_store.get(feedback.queryId)
+        logging.info(f"retrieved message data of object {retrieved_message_data}")
 
-        feedback_data = {
-            "id": feedback.queryId,
-            "values": vector,
-            "metadata": {
-                "response": feedback.response,
-                "isPositive": feedback.isPositive,
-            },
-        }
 
-        await pinecone.upsert(
-            index_name="feedback-index",
-            upsert_request={"vectors": [feedback_data]}
-        )
+        embedded_data = vector_store.embed_and_convert([retrieved_message_data.value],
+                                                       [retrieved_message_data.metadata])
+
+        vector_store.add_documents(embedded_data)
 
         return {"message": "Feedback submitted successfully"}
     except Exception as e:

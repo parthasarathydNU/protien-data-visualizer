@@ -101,6 +101,9 @@ class PineconeVectorStoreClient(BaseVectorStoreClient, VectorStore):
         except Exception as e:
             logger.error(f"Error initializing client: {e}")
             raise
+
+    def is_base_data_loaded(self):
+        return DEFAULT_INDEX_ID in self.client.list_indexes().names()
     
     def embed_and_convert(self, texts: list, metadata_list: list) -> list:
         try:
