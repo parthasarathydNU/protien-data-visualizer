@@ -41,7 +41,7 @@ load_dotenv()
 texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
 metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
 
-vector_store = PineconeVectorStoreClient(api_key=os.getenv('PINECONE_API_KEY'), environment='us-east-1')
+vector_store = PineconeVectorStoreClient()
 vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
 
 @asynccontextmanager

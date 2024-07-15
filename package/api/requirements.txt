@@ -13,6 +13,8 @@ python-dotenv
 langchain_openai
 langchain_community
 langchain
+langchain_pinecone
 pymysql
 chromadb
 pinecone
+pinecone-client[grpc]
