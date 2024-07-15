@@ -43,6 +43,10 @@ export const fetchSamples = (tableName: string) => {
   );
 };
 
+export const submitFeedback = async (payload: { queryId: string, response: string, isPositive: boolean }) => {
+  return apiRequest<any>({ method: "post", url: "submit_feedback", payload });
+};
+
 // chart or conversation
 // returns type ConversationMetadata[]
 export const usePreviousConversationsMetadata = (type: string)  => {

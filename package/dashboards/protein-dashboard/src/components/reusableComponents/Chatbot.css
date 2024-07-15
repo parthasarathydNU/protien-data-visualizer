@@ -84,6 +84,33 @@
 
   }
 
+  .feedback-container {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .feedback-button {
+    background-color: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .feedback-button:hover {
+    color: #007bff;
+  }
+  
+  .feedback-button.highlighted {
+    color: #007bff;
+  }
+  
+  .feedback-message {
+    font-size: 0.9rem;
+    color: #28a745;
+    margin-left: 10px;
+  }
   
   select {
     margin-left: 10px;

@@ -26,6 +26,8 @@ import {
   usePreviousConversationsMetadata,
 } from "api/api";
 import { useQueryClient } from "@tanstack/react-query";
+import FeedbackButtons from './FeedbackButtons';
+
 
 interface ReusableChatbotProps {
   initialMessage: string;
@@ -56,6 +58,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
       role: MessageRolesEnum.assistant,
       content: initialMessage,
       type: MessageContentTypeEnum.conversation,
+      id: "initial",
     },
   ]);
   const [followUpQuestions, setFollowUpQuestions] = useState<string[]>(
@@ -121,6 +124,7 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
         role: MessageRolesEnum.assistant,
         content: response.response,
         type: response.type,
+        id: response.id,
       },
     ]);
     setLoading(false);
@@ -191,12 +195,19 @@ const ReusableChatBot: React.FC<ReusableChatbotProps> = ({
                   <VegaChart data={chartData} spec={JSON.parse(msg.content)} />
                 </div>
               ) : (
+                <>
                 <Markdown
                   remarkPlugins={[remarkGfm]}
                   rehypePlugins={[rehypeRaw]}
                 >
                   {msg.content}
                 </Markdown>
+                {msg.id !== 'initial' && (
+    <FeedbackButtons queryId={msg.id!} response={msg.content} />
+  )}
+
+                </>
+                
               )}
             </div>
           </Fade>
