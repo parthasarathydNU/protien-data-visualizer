@@ -11,7 +11,7 @@ print("Hello")
 # print(db.table_info)
 
 # Generating a query
-llm = getLLM(model="gpt-3.5-turbo")
+llm = getLLM(model="gpt-4o-mini")
 # generate_query = getGenerateQueryChain(llm, db)
 # query = generate_query.invoke({"question": "What is the average hydrophobicity of UPI00000001D7"})
 # print(query)
