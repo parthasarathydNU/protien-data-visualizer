@@ -7,6 +7,7 @@ from vector_store.basevectorstoreclient import BaseVectorStoreClient
 from pinecone.grpc import PineconeGRPC as Pinecone
 from pinecone import ServerlessSpec
 from langchain.vectorstores import VectorStore
+from typing import List, Dict, Any, Optional
 
 DEFAULT_INDEX_ID = "default-index"
 
@@ -139,8 +140,20 @@ class PineconeVectorStoreClient(BaseVectorStoreClient, VectorStore):
         except Exception as e:
             logger.error(f"Error converting texts to documents: {e}")
             raise
+    
+    def from_texts(self, texts: List[str], embedding: OpenAIEmbeddings, metadatas: Optional[List[dict]] = None, **kwargs: Any) -> 'PineconeVectorStoreClient':
+        try:
+            if metadatas is None:
+                metadatas = [{}] * len(texts)
+            documents = self.embed_and_convert(texts, metadatas)
+            self.add_documents(documents)
+            return self
+        except Exception as e:
+            logger.error(f"Error in from_texts method: {type(e).__name__}: {e}")
+            raise
 
     def similarity_search(self, query: str, top_k: int = 10):
+        #TODO: fully implement
         try:
             query_embedding = self.embedding_model.embed_query(query)
             return self.search_documents(query_embedding, top_k)
