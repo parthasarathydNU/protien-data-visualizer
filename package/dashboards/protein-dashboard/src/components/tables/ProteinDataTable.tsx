@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { ProteinData } from "api/apiDataTypes";
 import { Link } from "react-router-dom";
+import ServiceDown from "../ServiceDown"
 
 function ProteinDataTable() {
   
@@ -20,7 +21,7 @@ function ProteinDataTable() {
   }
 
   if( error ) {
-    return <>{`Error in Loading data ${error}`}</>;
+    return <ServiceDown />;
   }
 
   if(proteins?.length == 0 || !proteins) {
