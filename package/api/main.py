@@ -9,7 +9,7 @@ from database import database
 import logging
 from sqlalchemy import select
 from contextlib import asynccontextmanager
-from vector_store.pineconevectorstoreclient import PineconeVectorStoreClient
+# from vector_store.pineconevectorstoreclient import PineconeVectorStoreClient
 from queryModel import FeedbackResponsePayload, QueryRequest, QueryResponse, ChartQueryRequest,ChartQueryResponse, ChatResponseTypes, CHAT_GPT_FOLLOWUP_PROMPT, CreateChartRequest
 from util_functions import process_protein_data, find_keyword
 from fastapi.encoders import jsonable_encoder
@@ -42,9 +42,9 @@ try:
     texts = [f"{example['input']} {example['query']}" for example in few_shot_examples]
     metadata_list = [{"input": example["input"], "query": example["query"]} for example in few_shot_examples]
 
-    vector_store = PineconeVectorStoreClient()
-    if not vector_store.is_base_data_loaded():
-        vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
+    # vector_store = PineconeVectorStoreClient()
+    # if not vector_store.is_base_data_loaded():
+    #     vector_store.add_documents(vector_store.embed_and_convert(texts, metadata_list))
     logger.info("Pinecone Vector Store initialized successfully.")
 except Exception as e:
     logger.error(f"Error initializing Pinecone Vector Store: {e}")
@@ -245,8 +245,8 @@ async def submit_feedback(feedback: FeedbackResponsePayload):
             raise HTTPException(status_code=404, detail="Query ID not found in memory store.")
         logger.info(f"Retrieved message data: {retrieved_message_data}")
 
-        embedded_data = vector_store.embed_and_convert([retrieved_message_data.value], [retrieved_message_data.metadata])
-        vector_store.add_documents(embedded_data)
+        # embedded_data = vector_store.embed_and_convert([retrieved_message_data.value], [retrieved_message_data.metadata])
+        # vector_store.add_documents(embedded_data)
         logger.info("Feedback submitted successfully.")
 
         return {"message": "Feedback submitted successfully"}
