@@ -10,7 +10,11 @@ const ReusableTableView: React.FC<ReusableTableViewProps> = ({dataSourceName}) =
   
     const {data, isLoading, error} =  fetchSamples(dataSourceName);
 
-    if(!data){
+    if (isLoading) {
+      return <span>"Loading Data..."</span>
+    }
+
+    if(error || !data ){
       return <ServiceDown />
     }
     
