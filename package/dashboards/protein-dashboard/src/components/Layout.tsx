@@ -15,6 +15,7 @@ const Layout: React.FC = () => {
           </Link>
           <div className="space-x-4 flex gap-2">
             <a
+              rel="noreferrer"
               href="https://www.youtube.com/playlist?list=PLuJI6RWPU5Viiw0ph9CwXEYWb27ss0tjd"
               target={"_blank"}
             >
@@ -51,7 +52,7 @@ const Layout: React.FC = () => {
       </main>
       <footer className="bg-gray-800 text-white py-4">
         <div className="container mx-auto text-center">
-          &copy; 2024 Protein Dashboard. All rights reserved.
+          &copy; 2024 Protein Dashboard. All rights reserved | <a rel="noreferrer" style={{textDecoration:"underline"}} href="https://github.com/parthasarathydNU/protien-data-visualizer" target={"_blank"}>GitHub</a>
         </div>
       </footer>
     </div>
